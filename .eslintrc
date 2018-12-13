@@ -1,0 +1,8 @@
+{
+  "env": {
+    "browser": true
+  },
+  "extends": [
+    "eslint-config-tomjwatson"
+  ]
+}

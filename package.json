@@ -1,11 +1,11 @@
 {
-  "name": "wtorrent-dweb",
+  "name": "wtp-ext",
   "version": "0.1.0",
-  "description": "",
+  "description": "Extension for the WebTorrent Protocol distributed web.",
   "main": "index.js",
   "scripts": {
     "start": "cross-env MOZ_DISABLE_CONTENT_SANDBOX=1 web-ext run --firefox=nightly --browser-console --url about:debugging --source-dir extension",
-    "bundle": "webpack",
+    "bundle": "webpack -p",
     "watch": "webpack --watch"
   },
   "author": "Tom Watson <tom@tomjwatson.com>",

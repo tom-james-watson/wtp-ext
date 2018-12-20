@@ -1,0 +1,25 @@
+{
+  "version": "0.1",
+  "manifest_version": 2,
+  "name": "...",
+  "description": "...",
+  "background": {
+    "scripts": ["/build/dist.js"]
+  },
+  "experiment_apis": {
+    "protocol": {
+      "schema": "../node_modules/libdweb/src/protocol/protocol.json",
+      "child": {
+        "scopes": ["addon_child"],
+        "paths": [["protocol"]],
+        "script": "../node_modules/libdweb/src/protocol/client.js"
+      },
+      "parent": {
+        "events": ["startup"],
+        "scopes": ["addon_parent"],
+        "paths": [["protocol"]],
+        "script": "../node_modules/libdweb/src/protocol/host.js"
+      }
+    }
+  }
+}

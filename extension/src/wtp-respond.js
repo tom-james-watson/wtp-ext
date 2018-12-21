@@ -1,8 +1,7 @@
 import logger from './lib/logger'
 import createMagnet from './lib/create-magnet'
-import {openTorrent, getFile, streamFile} from './lib/torrent'
+import {openTorrent, getFile, waitForFile, getFileBuffer, streamBuffer, streamFile} from './lib/torrent'
 import getContentType from './lib/content-type'
-
 
 /**
  * Handler for valid WTP urls.
@@ -26,8 +25,15 @@ export default async function torrentRespond(request) {
   const file = getFile(torrent, path)
   const contentType = getContentType(path)
 
+  await waitForFile(file)
+
+  const buffer = await getFileBuffer(file)
+
+  logger.debug(`Returning ${path} with contentType ${contentType}`)
+
   return {
     contentType,
-    content: streamFile(file)
+    contentLength: file.length,
+    content: streamBuffer(buffer)
   }
 }

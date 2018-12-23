@@ -14,6 +14,8 @@
     "@babel/core": "^7.2.2",
     "@babel/preset-env": "^7.2.3",
     "cross-env": "^5.2.0",
+    "eslint": "^5.11.0",
+    "eslint-config-tomjwatson": "^0.2.1",
     "libdweb": "https://github.com/mozilla/libdweb/tarball/a78b0a0c9a1f1d3d1e3343995de7d4a9b0cb000c/libdweb.tar.gz",
     "mime-types": "^2.1.21",
     "web-ext": "^2.9.3",

@@ -1,5 +1,4 @@
 import WebTorrent from 'webtorrent'
-import toArrayBuffer from 'to-arraybuffer'
 import logger from './logger'
 
 const client = new WebTorrent()
@@ -61,55 +60,6 @@ export function getFile(torrent, path) {
 }
 
 /**
- * Wait for a file to finish downloading.
- *
- * @param {Object} file - File object
- */
-export function waitForFile(file) {
-  return new Promise((resolve) => {
-    const poll = function() {
-      logger.debug({
-        downloaded: file.downloaded,
-        path: file.path,
-        name: file.name,
-        length: file.length,
-        progress: file.progress
-      })
-      if (file.progress === 1) {
-        return resolve()
-      }
-      setTimeout(poll, 50)
-    }
-    poll()
-  })
-}
-
-/**
- * Get the a buffer of the contents of a file.
- *
- * @param {ArrayBuffer} file - File object
- * @returns {ArrayBuffer} Buffer of file's contents
- */
-export function getFileBuffer(file) {
-  return new Promise((resolve) => {
-    file.getBuffer(function(err, buffer) {
-      resolve(buffer.buffer)
-    })
-  })
-}
-
-/**
- * Stream the buffer. The protocol handler response content is expected to be
- * an async generator, so simply yield the buffer.
- *
- * @param {ArrayBuffer} buffer - The buffer to be streamed
- * @returns {Generator} Async generator over buffer
- */
-export async function* streamBuffer(buffer) {
-  yield buffer
-}
-
-/**
  * Stream a file. This is an async generator that yields chunks of the stream
  * as they are read.
  *
@@ -117,9 +67,9 @@ export async function* streamBuffer(buffer) {
  * @returns {Generator} Content of file
  */
 export async function* streamFile(file) {
-  const fileStream = file.createReadStream()
+  const fileStream = file.createReadStream({start: 0, end: file.length})
 
   for await (const chunk of fileStream) {
-    yield chunk.buffer
+    yield(new Buffer(chunk).buffer)
   }
 }

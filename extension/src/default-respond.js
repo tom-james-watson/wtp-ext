@@ -1,21 +1,6 @@
 import logger from './lib/logger'
 
 /**
- * Handler for the default response.
- *
- * @param {Object} request - Request object
- * @returns {Object} Default response
- */
-export default function defaultRespond(request) {
-  logger.debug('Returning default response')
-
-  return {
-    contentType: 'text/html',
-    content: defaultResponse(request)
-  }
-}
-
-/**
  * Async generator for the default response content.
  *
  * @param {Object} request - Request object
@@ -30,4 +15,19 @@ async function* defaultResponse(request) {
   yield encoder.encode(
     '<p>A valid WTP URL looks like <strong>wtp://cae9b2e54bf5bf9881b5375fd45b9f953ad0a2ac</strong>'
   ).buffer
+}
+
+/**
+ * Handler for the default response.
+ *
+ * @param {Object} request - Request object
+ * @returns {Object} Default response
+ */
+export default function defaultRespond(request) {
+  logger.debug('Returning default response')
+
+  return {
+    contentType: 'text/html',
+    content: defaultResponse(request)
+  }
 }

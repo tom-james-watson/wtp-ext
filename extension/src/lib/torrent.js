@@ -28,6 +28,29 @@ export function openTorrent(magnetUrl) {
 }
 
 /**
+ * Convert a URL path into a torrent filepath.
+ *
+ * @param {Object} path - Path of file from URL
+ * @returns {String} Path to file in torrent
+ */
+export function getPath(path) {
+  path = path.split('?')[0]
+  path = path.split('#')[0]
+
+  const parts = path.split('/')
+  const fileName = parts[parts.length - 1]
+
+  if (!fileName.includes('.')) {
+    if (fileName.length > 0) {
+      path += '/'
+    }
+    path += 'index.html'
+  }
+
+  return path
+}
+
+/**
  * Get a file object from a torrent for a given path.
  *
  * @param {Object} torrent - Torrent object
@@ -35,10 +58,7 @@ export function openTorrent(magnetUrl) {
  * @returns {Object} File
  */
 export function getFile(torrent, path) {
-  if (path === '/') {
-    path = '/index.html'
-  }
-
+  path = getPath(path)
   logger.debug(`Searching for file ${path}.`)
 
   const file = torrent.files.find(function (file) {
@@ -70,6 +90,6 @@ export async function* streamFile(file) {
   const fileStream = file.createReadStream({start: 0, end: file.length})
 
   for await (const chunk of fileStream) {
-    yield(new Buffer(chunk).buffer)
+    yield new Buffer(chunk).buffer
   }
 }

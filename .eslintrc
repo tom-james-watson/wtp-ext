@@ -2,6 +2,12 @@
   "env": {
     "browser": true
   },
+  'globals': {
+    'browser': false,
+  },
+  "parserOptions": {
+    "ecmaVersion": 2018
+  },
   "extends": [
     "eslint-config-tomjwatson"
   ]

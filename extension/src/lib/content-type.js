@@ -1,4 +1,4 @@
-import mime from 'mime-types'
+import mime from 'mime'
 
 /**
  * Get the requested path's content type.
@@ -7,12 +7,11 @@ import mime from 'mime-types'
  * @returns {String} Content Type
  */
 export default function getContentType(path) {
-  const parts = path.split('/')
-  const file = parts[parts.length - 1]
+  let contentType = mime.getType(path)
 
-  if (file === '') {
-    return 'text/html'
+  if (contentType === null) {
+    contentType = 'text/html'
   }
 
-  return mime.contentType(file)
+  return contentType
 }

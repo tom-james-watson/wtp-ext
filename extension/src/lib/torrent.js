@@ -21,6 +21,9 @@ export function openTorrent(magnetUrl) {
 
     client.add(magnetUrl, function (torrent) {
       logger.debug(`Torrent loaded successfully.`)
+
+      checkSubfolders(torrent)
+
       torrents[magnetUrl] = torrent
       resolve(torrent)
     })
@@ -34,6 +37,10 @@ export function openTorrent(magnetUrl) {
  * @returns {String} Path to file in torrent
  */
 export function getPath(path) {
+  // Remove preceding slash
+  path = path.substr(1)
+
+  // Remove any query params
   path = path.split('?')[0]
   path = path.split('#')[0]
 
@@ -51,6 +58,39 @@ export function getPath(path) {
 }
 
 /**
+ * Check whether the torrent's files are within a subfolder.
+ *
+ * This will happen if the torrent is created by adding a whole directory, as
+ * opposed to the files and folders within that directory. If this is the case,
+ * we mark it as such on the torrent and then ignore the top folder when
+ * looking up file paths.
+ *
+ * @param {Object} torrent - Torrent object
+ */
+export function checkSubfolders(torrent) {
+
+  let folders = new Set([])
+
+  torrent.files.forEach(function(file) {
+    if (!file.path.includes('/')) {
+      return
+    }
+
+    const folder = file.path.split('/').shift()
+
+    if (folder) {
+      folders.add(folder)
+    }
+  })
+
+  folders = Array.from(folders)
+
+  if (folders.length === 1) {
+    torrent.subfolder = folders[0]
+  }
+}
+
+/**
  * Get a file object from a torrent for a given path.
  *
  * @param {Object} torrent - Torrent object
@@ -62,9 +102,12 @@ export function getFile(torrent, path) {
   logger.debug(`Searching for file ${path}.`)
 
   const file = torrent.files.find(function (file) {
-    const fileParts = file.path.split('/')
-    fileParts.shift()
-    const filePath = `/${fileParts.join('/')}`
+    let filePath = file.path
+
+    if (torrent.subfolder) {
+      filePath = filePath.replace(`${torrent.subfolder}/`, '')
+    }
+
     if (filePath === path) {
       return true
     }

@@ -1,0 +1,80 @@
+version: 2
+
+jobs:
+
+  tests:
+    docker:
+      - image: circleci/node:10.8.0
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Install dependencies
+          command: npm i
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Run tests
+          command: npm t
+
+  package:
+    docker:
+      - image: circleci/node:10.8.0
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - restore_cache:
+          keys:
+          - dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Install dependencies
+          command: npm i
+      - save_cache:
+          paths:
+            - node_modules
+          key: dependencies-{{ checksum "package.json" }}
+      - run:
+          name: Bundle extension JS
+          command: npm run bundle
+      - run:
+          name: Build the extension
+          command: npm run build
+      - persist_to_workspace:
+          root: ~/repo
+          paths: .
+
+  publish-github-release:
+    docker:
+      - image: circleci/golang:1.8
+    working_directory: ~/repo
+    steps:
+      - attach_workspace:
+          at: ~/repo
+      - run:
+          name: Publish release on github
+          command: |
+            VERSION=$(cat package.json | grep version | head -1 | awk -F: '{ print $2 }' | sed 's/[",]//g')
+
+            go get github.com/tcnksm/ghr
+
+            ghr -t ${GITHUB_TOKEN} -u ${CIRCLE_PROJECT_USERNAME} -r ${CIRCLE_PROJECT_REPONAME} -c ${CIRCLE_SHA1} -delete ${VERSION} ./artifacts/
+
+workflows:
+  version: 2
+  cicd-workflow:
+    jobs:
+      - tests
+      - package:
+          requires:
+            - tests
+          filters:
+            branches:
+              only: master
+      - publish-github-release:
+          requires:
+            - package

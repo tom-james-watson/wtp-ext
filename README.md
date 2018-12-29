@@ -9,7 +9,7 @@ This is a proof-of-concept implementation of a distributed web powered by torren
 
 This repository contains a web extension that, using [libdweb](https://github.com/mozilla/libdweb/), registers a protocol handler for a new `wtp://` WebTorrent Protocol. This extension allows you to open `wtp://` links as fully-functioning webpages, loaded directly from torrents.
 
-![Browser window with website loaded over WTP](./images/url.png)
+![Browser window with website loaded over WTP](./images/wtp-url.png)
 
 ## How WTP works
 

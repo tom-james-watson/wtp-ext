@@ -17,7 +17,7 @@ WTP URLs have the following structure:
 
 For example, here is a link to a blog post on my personal website:
 
-[wtp://b8bede038ff70c6e683e5b18f650f17deb1ed532/blog/vim-tips/](wtp://b8bede038ff70c6e683e5b18f650f17deb1ed532/blog/vim-tips/)
+<a href="wtp://b8bede038ff70c6e683e5b18f650f17deb1ed532/blog/vim-tips/">wtp://b8bede038ff70c6e683e5b18f650f17deb1ed532/blog/vim-tips/</a>
 
 The extension will parse the magnet hash of the resource and load the torrent using the [WebTorrent](https://github.com/webtorrent/webtorrent) library. Requests to resources are then translated directly into lookups for files in the loaded torrent. Requests to paths without file extensions will be assumed to be requests for a `index.html` file in a folder at the given path, e.g. `/blog` will look for a `/blog/index.html` file.
 
@@ -71,7 +71,7 @@ On macOS, the bin is located at:
 /Applications/Firefox\ Nightly.app/Contents/MacOS/firefox-bin
 ```
 
-You can then load the temporary addon by going to [about:debugging#addons](about:debugging#addons) and selecting <link to be added>.
+You can then load the temporary addon by going to <a href="about:debugging#addons">about:debugging#addons</a> and selecting `ext.zip`, which can be downloaded [here](https://github.com/tom-james-watson/wtp-ext/releases/latest).
 
 ### Development
 

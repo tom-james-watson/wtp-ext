@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "cross-env MOZ_DISABLE_CONTENT_SANDBOX=1 web-ext run --firefox=nightly --browser-console --url about:debugging --source-dir extension",
-    "build": "pushd extension && zip -1 -r ext.zip manifest.json libdweb/src/protocol build && mv ext.zip ../artifacts/ && popd",
+    "build": "cd extension && zip -1 -r ext.zip manifest.json libdweb/src/protocol build && mv ext.zip ../artifacts/",
     "bundle": "webpack -p",
     "watch": "webpack --watch"
   },

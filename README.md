@@ -1,9 +1,9 @@
 WebTorrent Protocol
 ===================
 
-Proof-of-concept distributed web powered by WebTorrents.
+> Proof-of-concept distributed web powered by WebTorrents.
 
----
+[![CircleCI branch](https://img.shields.io/circleci/project/github/tom-james-watson/wtp-ext/master.svg)](https://circleci.com/gh/tom-james-watson/workflows/wtp-ext/tree/master)
 
 This repository contains a web extension that, using [libdweb](https://github.com/mozilla/libdweb/), registers a protocol handler for a new `wtp://` WebTorrent Protocol. This extension allows you to open wtp links as fully-functioning webpages, loaded directly from torrents.
 
@@ -17,7 +17,7 @@ WTP URLs have the following structure:
 
 For example, here is a link to a blog post on my personal website:
 
-<a href="wtp://b8bede038ff70c6e683e5b18f650f17deb1ed532/blog/vim-tips/">wtp://b8bede038ff70c6e683e5b18f650f17deb1ed532/blog/vim-tips/</a>
+`wtp://b8bede038ff70c6e683e5b18f650f17deb1ed532/blog/vim-tips/`
 
 The extension will parse the magnet hash of the resource and load the torrent using the [WebTorrent](https://github.com/webtorrent/webtorrent) library. Requests to resources are then translated directly into lookups for files in the loaded torrent. Requests to paths without file extensions will be assumed to be requests for a `index.html` file in a folder at the given path, e.g. `/blog` will look for a `/blog/index.html` file.
 
@@ -71,7 +71,7 @@ On macOS, the bin is located at:
 /Applications/Firefox\ Nightly.app/Contents/MacOS/firefox-bin
 ```
 
-You can then load the temporary addon by going to <a href="about:debugging#addons">about:debugging#addons</a> and selecting `ext.zip`, which can be downloaded [here](https://github.com/tom-james-watson/wtp-ext/releases/latest).
+You can then load the temporary addon by going to `about:debugging#addons` and selecting `ext.zip`, which can be downloaded [here](https://github.com/tom-james-watson/wtp-ext/releases/latest).
 
 ### Development
 

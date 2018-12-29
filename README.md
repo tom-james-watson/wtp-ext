@@ -7,7 +7,7 @@ WebTorrent Protocol
 
 This is a proof-of-concept implementation of a distributed web powered by torrents. Instead of the traditional client-server model, websites are loaded directly from torrents, allowing websites to be hosted in a distributed and redundant manner.
 
-This repository contains a web extension that, using [libdweb](https://github.com/mozilla/libdweb/), registers a protocol handler for a new `wtp://` WebTorrent Protocol. This extension allows you to open `wtp://` links as fully-functioning webpages, loaded directly from torrents.
+This repository contains a web extension that, using [libdweb](https://github.com/mozilla/libdweb/), registers a protocol handler for a new `wtp://` WebTorrent Protocol. This extension allows you to open `wtp://` links as fully-functioning webpages, loaded directly from torrents, without needing to download and run any additional gateway software.
 
 ![Browser window with website loaded over WTP](./images/wtp-url.png)
 
@@ -17,29 +17,34 @@ The extension registers itself as a handler for the `wtp://` protocol, meaning r
 
 WTP URLs have the following structure:
 
-`wtp://<magnet hash>[/path to resource]`
+`wtp://<magnet hash>[/path/to/resource]`
 
 For example, here is a link to a blog post on my personal website:
 
-`wtp://b8bede038ff70c6e683e5b18f650f17deb1ed532/blog/vim-tips/`
+`wtp://c72c96ec226d05934aa46027bb9dbbb98441717e/blog/vim-tips/`
 
-The extension will parse the magnet hash of the resource and load the torrent using the [WebTorrent](https://github.com/webtorrent/webtorrent) library. Requests to resources are then translated directly into lookups for files in the loaded torrent. Requests to paths without file extensions will be assumed to be requests for a `index.html` file in a folder at the given path, e.g. `/blog` will look for a `/blog/index.html` file.
+The extension will parse the magnet hash of the resource and load the torrent using the [WebTorrent](https://github.com/webtorrent/webtorrent) library. Requests to resources are then translated directly into lookups for files in the loaded torrent. The data of found files are then streamed into the request response.
+
+Visitors to the website also act as seeders, ensuring the website can scale as traffic grows.
 
 ## Roadmap
 
 Here are the major pieces of functionality I would like to add:
 
 * Use DNS TXT record lookups to allow resolving of domains to hashes.
+* Add control over how long visited websites are seeded.
 * Have the extension display some indication of the state of the torrent when loading a WTP resource, such as number of seeders.
 * Add the ability to create and seed websites directly from the extension.
 
 ## Running the WebTorrent Protocol Handler extension
 
-### Prerequisites
+### Requirements
 
-The extension depends on the experimental APIs provided by [libdweb](https://github.com/mozilla/libdweb/) and as such must be run using [Firefox Nightly](https://www.mozilla.org/en-US/firefox/nightly/all/?q=English%20(US)).
+The extension depends on the experimental APIs provided by [libdweb](https://github.com/mozilla/libdweb/). As such, **[Firefox Nightly](https://www.mozilla.org/en-US/firefox/nightly/all/?q=English%20(US)) must be installed on your machine in order to run the extension**.
 
 ### Running
+
+The easiest way to run the extension at the moment is to clone the repository and load it with the follow npm scripts.
 
 Install dependencies:
 
@@ -63,7 +68,7 @@ npm start
 
 Alternatively, if you don't want to clone the whole repo, you can load the built extension as a temporary addon in Firefox Nightly.
 
-*NOTE - you must launch Firefox Nightly with the content sandbox disabled*:
+**NOTE - you must launch Firefox Nightly with the content sandbox disabled**:
 
 ```
 MOZ_DISABLE_CONTENT_SANDBOX=1 /path/to/firefox-nightly
@@ -77,7 +82,31 @@ On macOS, the bin is located at:
 
 You can then load the temporary addon by going to `about:debugging#addons` and selecting `ext.zip`, which can be downloaded [here](https://github.com/tom-james-watson/wtp-ext/releases/latest).
 
-### Development
+## Loading and hosting websites over WTP
+
+Try loading my personal website:
+
+`wtp://c72c96ec226d05934aa46027bb9dbbb98441717e`
+
+You can create your own WTP website simply by seeding a webtorrent of static files.
+
+The easiest way for the purposes of testing is to use [instant.io](https://instant.io) to create a torrent with your files. Copy the "Torrent info hash" and open it as `wtp://<hash>`.
+
+A more permanent method is to use the [webtorrent-hybrid](https://github.com/webtorrent/webtorrent-hybrid) CLI tool to seed your files:
+
+```
+webtorrent-hybrid seed .
+```
+
+You can then leave this running on a VPS, for example, to ensure your site is always seeded.
+
+You can seed an existing torrent with:
+
+```
+webtorrent-hybrid <hash> --keep-seeding
+```
+
+## Development
 
 Install dependencies:
 

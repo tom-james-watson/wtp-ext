@@ -47,6 +47,9 @@ export function getPath(path) {
   const parts = path.split('/')
   const fileName = parts[parts.length - 1]
 
+  // Requests to paths without file extensions are assumed to be requests for a
+  // `index.html` file in a folder at the given path, e.g. `/blog` will look
+  // for a `/blog/index.html` file.
   if (!fileName.includes('.')) {
     if (fileName.length > 0) {
       path += '/'

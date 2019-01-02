@@ -16,7 +16,7 @@ This repository contains a web extension that, using [libdweb](https://github.co
 - [How WTP works](#how-wtp-works)
 - [Roadmap](#roadmap)
 - [Running the WebTorrent Protocol Handler extension](#running-the-webtorrent-protocol-handler-extension)
-- [Loading and hosting websites over WTP](#loading-and-hosting-websites-over-wtp)
+- [Loading and serving websites over WTP](#loading-and-serving-websites-over-wtp)
 - [Development](#development)
 
 ## How WTP works
@@ -90,20 +90,18 @@ On macOS, the bin is located at:
 
 You can then load the temporary addon by going to `about:debugging#addons` and selecting `ext.zip`, which can be downloaded [here](https://github.com/tom-james-watson/wtp-ext/releases/latest).
 
-## Loading and hosting websites over WTP
+## Loading and serving websites over WTP
 
 Try loading my personal website:
 
 `wtp://c72c96ec226d05934aa46027bb9dbbb98441717e`
 
-You can create your own WTP website simply by seeding a webtorrent of static files.
-
-The easiest way for the purposes of testing is to use [instant.io](https://instant.io) to create a torrent with your files. Copy the "Torrent info hash" and open it as `wtp://<hash>`.
+You can serve your own WTP website simply by seeding a webtorrent of static files. The easiest way for the purposes of testing is to use [instant.io](https://instant.io) to create a torrent with your files. Copy the "Torrent info hash" and open it as `wtp://<hash>`.
 
 A more permanent method is to use the [webtorrent-hybrid](https://github.com/webtorrent/webtorrent-hybrid) CLI tool to seed your files:
 
 ```
-webtorrent-hybrid seed .
+webtorrent-hybrid seed <dir of static site>
 ```
 
 You can then leave this running on a VPS, for example, to ensure your site is always seeded.

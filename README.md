@@ -11,6 +11,14 @@ This repository contains a web extension that, using [libdweb](https://github.co
 
 ![Browser window with website loaded over WTP](./images/wtp-url.png)
 
+### Contents
+
+- [How WTP works](#how-wtp-works)
+- [Roadmap](#roadmap)
+- [Running the WebTorrent Protocol Handler extension](#running-the-webtorrent-protocol-handler-extension)
+- [Loading and hosting websites over WTP](#loading-and-hosting-websites-over-wtp)
+- [Development](#development)
+
 ## How WTP works
 
 The extension registers itself as a handler for the `wtp://` protocol, meaning requests to `wtp://` resources are intercepted and handled by the extension.

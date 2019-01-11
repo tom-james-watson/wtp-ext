@@ -50,6 +50,16 @@ Here are the major pieces of functionality I would like to add:
 
 The extension depends on the experimental APIs provided by [libdweb](https://github.com/mozilla/libdweb/). As such, **[Firefox Nightly](https://www.mozilla.org/en-US/firefox/nightly/all/?q=English%20(US)) must be installed on your machine in order to run the extension**.
 
+On mac, simply download Firefox Nightly and install it to `/Applications`.
+
+On linux, `firefox-nightly` must be available in your path. For example:
+
+```
+tar -xf firefox-66.0a1.en-US.linux-x86_64.tar.bz2
+sudo mv firefox /opt/firefox-nightly
+sudo ln -s /opt/firefox-nightly/firefox /usr/local/bin/firefox-nightly
+```
+
 ### Running
 
 The easiest way to run the extension at the moment is to clone the repository and load it with the follow npm scripts.

@@ -7,9 +7,27 @@
     "scripts": ["/build/background.js"]
   },
   "permissions": [
-    "tabs"
+    "tabs",
+    "dns"
   ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "experiment_apis": {
+    "UDPSocket": {
+      "schema": "libdweb/src/UDPSocket/UDPSocket.json",
+      "child": {
+        "scopes": ["addon_child"],
+        "paths": [["UDPSocket"]],
+        "script": "libdweb/src/UDPSocket/Socket.js"
+      }
+    },
+    "TCPSocket": {
+      "schema": "libdweb/src/TCPSocket/TCPSocket.json",
+      "child": {
+        "scopes": ["addon_child"],
+        "paths": [["TCPSocket"]],
+        "script": "libdweb/src/TCPSocket/Socket.js"
+      }
+    },
     "protocol": {
       "schema": "libdweb/src/toolkit/components/extensions/schemas/protocol.json",
       "child": {

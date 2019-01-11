@@ -31,6 +31,6 @@
     "web-ext": "^2.9.3",
     "webpack": "^4.28.0",
     "webpack-cli": "^3.1.2",
-    "webtorrent": "^0.103.0"
+    "webtorrent": "git+https://git@github.com/tom-james-watson/webtorrent.git"
   }
 }

@@ -24,5 +24,8 @@ module.exports = {
   },
   node: {
     fs: 'empty'
+  },
+  resolve: {
+    modules: [path.resolve(__dirname, 'extension/node-polyfills'), 'node_modules']
   }
 }

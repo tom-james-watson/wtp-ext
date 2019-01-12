@@ -50,7 +50,7 @@ Here are the major pieces of functionality I would like to add:
 
 The extension depends on the experimental APIs provided by [libdweb](https://github.com/mozilla/libdweb/). As such, **[Firefox Nightly](https://www.mozilla.org/en-US/firefox/nightly/all/?q=English%20(US)) must be installed on your machine in order to run the extension**.
 
-On mac, simply download Firefox Nightly and install it to `/Applications`.
+On mac and windows, simply install Firefox Nightly as normal and `web-ext` will handle the rest.
 
 On linux, `firefox-nightly` must be available in your path. For example:
 

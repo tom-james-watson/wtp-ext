@@ -1,19 +1,13 @@
-console.log('Loaded dns')
-
 async function lookup(host, options, cb) {
   if (!cb) {
     cb = options
     options = {}
   }
-  const family = options.family === 4 ? 4 : null
-  const all = !!options.all
+
   try {
-    console.log('lookup', {host, options, family, all})
     const result = await browser.dns.resolve(host)
-    console.log({result})
     cb(null, result)
   } catch (e) {
-    console.log('mydns', {e})
     cb(e)
   }
 }

@@ -16,7 +16,7 @@ function dgram(lib) {
       super()
 
       if (type !== null && typeof type === "object") {
-        var options = type
+        const options = type
         this.type = options.type
         this.dns = options.lookup ? fromNodeLookup(options.lookup) : lib.dns
         this._reuseAddr = !!options.reuseAddr
@@ -76,12 +76,16 @@ function dgram(lib) {
         )
       }
 
-      port = port >>> 0
-      if (port === 0 || port > 65535) throw new ERR_SOCKET_BAD_PORT(port)
+      port >>>= 0
+      if (port === 0 || port > 65535) {
+        throw new ERR_SOCKET_BAD_PORT(port)
+      }
 
       // Normalize callback so it's either a function or undefined but not anything
       // else.
-      if (typeof callback !== "function") callback = undefined
+      if (typeof callback !== "function") {
+        callback = undefined
+      }
 
       if (typeof address === "function") {
         callback = address
@@ -120,7 +124,7 @@ function dgram(lib) {
     async awake() {
       if (this.isIdle) {
         this.isIdle = false
-        const { workQueue } = this
+        const {workQueue} = this
         let index = 0
         while (index < workQueue.length) {
           const task = workQueue[index++]
@@ -132,7 +136,7 @@ function dgram(lib) {
     }
 
     address() {
-      const { host, port, family } = this._healthCheck().address
+      const {host, port, family} = this._healthCheck().address
       return {
         address: host,
         host,
@@ -202,36 +206,34 @@ function dgram(lib) {
     }
 
     bind(...args) {
-      let [port_, address_, callback] = args
+      let [port_, address_] = args
       let port = port_
 
-      if (this._bindState !== Bind.BIND_STATE_UNBOUND)
+      if (this._bindState !== Bind.BIND_STATE_UNBOUND) {
         throw new ERR_SOCKET_ALREADY_BOUND()
+      }
 
       this._bindState = Bind.BIND_STATE_BINDING
 
       if (
         arguments.length &&
         typeof arguments[arguments.length - 1] === "function"
-      )
+      ) {
         this.once("listening", arguments[arguments.length - 1])
+      }
 
-      var address
-      var exclusive
+      let address
 
       if (port !== null && typeof port === "object") {
         address = port.address || ""
-        exclusive = !!port.exclusive
         port = port.port
       } else {
         address = typeof address_ === "function" ? "" : address_
-        exclusive = false
       }
 
       // defaulting address for bind to all interfaces
       if (!address) {
-        if (this.type === "udp4") address = "0.0.0.0"
-        else address = "::"
+        address = this.type === 'udp4' ? '0.0.0.0' : "::"
       }
 
       this.schedule(new Spawn(this, address, port))
@@ -248,15 +250,15 @@ function dgram(lib) {
     }
 
     async perform() {
-      const { socket, address, port } = this
+      const {socket, address, port} = this
       try {
         const record = await socket.dns.resolve(address)
         const host = record.addresses[0]
         const addressReuse = socket._reuseAddr
         const options =
-          port != undefined && port !== 0
-            ? { host, port, addressReuse }
-            : { host, addressReuse }
+          port !== undefined && port !== 0
+            ? {host, port, addressReuse}
+            : {host, addressReuse}
 
         const _handle = await lib.UDPSocket.create(options)
         socket._handle = _handle
@@ -279,13 +281,13 @@ function dgram(lib) {
     }
 
     async perform() {
-      const { socket, list, port, address, callback } = this
-      const { _handle } = socket
+      const {socket, list, port, address, callback} = this
+      const {_handle} = socket
       const host = (await socket.dns.resolve(address)).addresses[0]
 
       if (_handle) {
         try {
-          for (const { buffer } of list) {
+          for (const {buffer} of list) {
             await lib.UDPSocket.send(_handle, host, port, buffer)
           }
 
@@ -311,7 +313,7 @@ function dgram(lib) {
     }
 
     async perform() {
-      const { socket } = this
+      const {socket} = this
       try {
         const handle = socket._healthCheck()
         socket._handle = null
@@ -324,7 +326,7 @@ function dgram(lib) {
   }
 
   const listen = async function(socket, handle) {
-    for await (const { data, from } of lib.UDPSocket.messages(handle)) {
+    for await (const {data, from} of lib.UDPSocket.messages(handle)) {
       socket.emit("message", Buffer.from(data), {
         address: from.host,
         family: toNodeFamily(from.family),
@@ -339,7 +341,7 @@ function dgram(lib) {
     return new Socket(options, callback)
   }
 
-  return { createSocket, Socket }
+  return {createSocket, Socket}
 }
 
 function oneOf(expected, thing) {
@@ -416,33 +418,9 @@ class ERR_SOCKET_ALREADY_BOUND extends Error {
   }
 }
 
-class ERR_SOCKET_BAD_BUFFER_SIZE extends TypeError {
-  constructor() {
-    super("Buffer size must be a positive integer")
-  }
-}
-
 class ERR_SOCKET_BAD_PORT extends RangeError {
   constructor(port) {
     super("Port should be > 0 and < 65536. Received ${port}.")
-  }
-}
-
-class ERR_SOCKET_BAD_TYPE extends TypeError {
-  constructor() {
-    super("Bad socket type specified. Valid types are: udp4, udp6")
-  }
-}
-
-class ERR_SOCKET_BUFFER_SIZE extends Error {
-  constructor() {
-    super("Could not get or set buffer size")
-  }
-}
-
-class ERR_SOCKET_CANNOT_SEND extends Error {
-  constructor() {
-    super("Unable to send data")
   }
 }
 
@@ -496,11 +474,15 @@ function sliceBuffer(source, offset, length) {
 function fixBufferList(list) {
   const newlist = new Array(list.length)
 
-  for (var i = 0, l = list.length; i < l; i++) {
-    var buf = list[i]
-    if (typeof buf === "string") newlist[i] = Buffer.from(buf)
-    else if (!isUint8Array(buf)) return null
-    else newlist[i] = buf
+  for (let i = 0; i < list.length; i++) {
+    const buf = list[i]
+    if (typeof buf === "string") {
+      newlist[i] = Buffer.from(buf)
+    } else if (!isUint8Array(buf)) {
+      return null
+    } else {
+      newlist[i] = buf
+    }
   }
 
   return newlist
@@ -515,7 +497,7 @@ const fromNodeLookup = (lookup) => ({
         if (error) {
           reject(error)
         } else {
-          resolve({addresses: [address] })
+          resolve({addresses: [address]})
         }
       })
     })

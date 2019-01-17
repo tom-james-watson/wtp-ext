@@ -7,6 +7,8 @@ import defaultRespond from './default-respond'
 import './lib/messages'
 import './lib/browser-action'
 
+localStorage.debug = '*'
+
 logger.info('Initialized wtp.')
 
 /**

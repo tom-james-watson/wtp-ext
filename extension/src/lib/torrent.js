@@ -32,6 +32,14 @@ export function openTorrent(hash, host=null, loadIfNotCached=true) {
     client.add(magnetUrl, function (torrent) {
       logger.debug(`Torrent loaded successfully.`)
 
+      torrent.on('wire', function (wire, addr) {
+        logger.debug('Connected to peer with address ' + addr)
+      })
+
+      torrent.on('noPeers', function (announceType) {
+        logger.debug('No peers', {announceType})
+      })
+
       checkSubfolders(torrent)
 
       torrent.host = host

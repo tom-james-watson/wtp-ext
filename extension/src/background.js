@@ -11,7 +11,7 @@ logger.info('Initialized wtp.')
  * @returns {Function} Handler function for this request
  */
 function getHandler(request) {
-  if (request.url.length < 47) {
+  if (request.url.length < 46) {
     return defaultRespond
   }
 

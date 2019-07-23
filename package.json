@@ -17,7 +17,7 @@
     "cross-env": "^5.2.0",
     "eslint": "^5.11.0",
     "eslint-config-tomjwatson": "^0.2.1",
-    "libdweb": "https://github.com/mozilla/libdweb/tarball/a78b0a0c9a1f1d3d1e3343995de7d4a9b0cb000c/libdweb.tar.gz",
+    "libdweb": "https://github.com/mozilla/libdweb/tarball/79354c9b4ba991813b3a4d748e2359d088e589df/libdweb.tar.gz",
     "mime": "^2.4.0",
     "web-ext": "^2.9.3",
     "webpack": "^4.28.0",

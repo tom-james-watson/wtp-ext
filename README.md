@@ -29,7 +29,7 @@ WTP URLs have the following structure:
 
 For example, here is a link to a blog post on my personal website:
 
-`wtp://c72c96ec226d05934aa46027bb9dbbb98441717e/blog/vim-tips/`
+`wtp://951ead31d09e4049fc1f21f137e233dd0589fcbd/blog/vim-tips/`
 
 The extension will parse the magnet hash of the resource and load the torrent using the [WebTorrent](https://github.com/webtorrent/webtorrent) library. Requests to resources are then translated directly into lookups for files in the loaded torrent. The data of found files are then streamed into the request response.
 
@@ -104,7 +104,7 @@ You can then load the temporary addon by going to `about:debugging#addons` and s
 
 Try loading my personal website:
 
-`wtp://c72c96ec226d05934aa46027bb9dbbb98441717e`
+`wtp://951ead31d09e4049fc1f21f137e233dd0589fcbd`
 
 You can serve your own WTP website simply by seeding a webtorrent of static files. The easiest way for the purposes of testing is to use [instant.io](https://instant.io) to create a torrent with your files. Copy the "Torrent info hash" and open it as `wtp://<hash>`.
 

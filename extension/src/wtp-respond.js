@@ -27,9 +27,13 @@ export default async function torrentRespond(request) {
 
   logger.debug(`Returning ${path} with contentType ${contentType}`)
 
-  return {
-    contentType,
-    contentLength: file.length,
-    content: streamFile(file)
-  }
+  return new Promise((resolve) => {
+    resolve(new Response(
+      streamFile(file),
+      {
+        headers: {"content-type": contentType},
+        contentLength: file.length
+      }
+    ))
+  })
 }

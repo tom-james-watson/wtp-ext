@@ -117,7 +117,8 @@ export function getFile(torrent, path) {
   })
 
   if (!file) {
-    throw `Could not find file ${path} in torrent.`
+    logger.error(`Could not find file ${path} in torrent.`)
+    throw new Error(`Could not find file ${path} in torrent.`)
   }
 
   logger.debug(`Successfully found file ${path}.`)
@@ -126,16 +127,29 @@ export function getFile(torrent, path) {
 }
 
 /**
- * Stream a file. This is an async generator that yields chunks of the stream
- * as they are read.
+ * Stream a file. This returns a ReadableStream containing chunks of the file
+ * as they are read from the torrent.
  *
  * @param {Object} file - File object
- * @returns {Generator} Content of file
+ * @returns {ReadableStream} Content of file
  */
-export async function* streamFile(file) {
+export function streamFile(file) {
   const fileStream = file.createReadStream({start: 0, end: file.length})
 
-  for await (const chunk of fileStream) {
-    yield new Buffer(chunk).buffer
-  }
+  let cancelled = false
+
+  return new ReadableStream({
+    async start(controller) {
+      for await (const chunk of fileStream) {
+        if (cancelled) {
+          break
+        }
+        controller.enqueue(new Buffer(chunk))
+      }
+      controller.close()
+    },
+    cancel() {
+      cancelled = true
+    }
+  })
 }

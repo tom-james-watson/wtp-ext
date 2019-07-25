@@ -1,7 +1,6 @@
 const trackers = [
-  'wss://tracker.btorrent.xyz',
   'wss://tracker.openwebtorrent.com',
-  'wss://tracker.fastcast.nz'
+  'https://tracker.openwebtorrent.com'
 ]
 
 /**

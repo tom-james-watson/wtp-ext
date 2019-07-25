@@ -1,2 +1,3 @@
-const dgramify = require('./node-dgram')
+
+const dgramify = require("./node-dgram")
 module.exports = dgramify(browser)

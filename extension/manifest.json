@@ -13,19 +13,19 @@
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "experiment_apis": {
     "UDPSocket": {
-      "schema": "libdweb/src/UDPSocket/UDPSocket.json",
+      "schema": "libdweb/src/toolkit/components/extensions/schemas/udp.json",
       "child": {
         "scopes": ["addon_child"],
         "paths": [["UDPSocket"]],
-        "script": "libdweb/src/UDPSocket/Socket.js"
+        "script": "libdweb/src/toolkit/components/extensions/child/ext-udp.js"
       }
     },
     "TCPSocket": {
-      "schema": "libdweb/src/TCPSocket/TCPSocket.json",
+      "schema": "libdweb/src/toolkit/components/extensions/schemas/tcp.json",
       "child": {
         "scopes": ["addon_child"],
         "paths": [["TCPSocket"]],
-        "script": "libdweb/src/TCPSocket/Socket.js"
+        "script": "libdweb/src/toolkit/components/extensions/child/ext-tcp.js"
       }
     },
     "protocol": {

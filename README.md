@@ -3,7 +3,8 @@ WebTorrent Protocol
 
 > Proof-of-concept distributed web powered by WebTorrents.
 
-[![CircleCI branch](https://img.shields.io/circleci/project/github/tom-james-watson/wtp-ext/master.svg)](https://circleci.com/gh/tom-james-watson/workflows/wtp-ext/tree/master)
+[![CircleCI build](https://img.shields.io/circleci/build/github/tom-james-watson/wtp-ext/master)](https://circleci.com/gh/tom-james-watson/workflows/wtp-ext/tree/master)
+
 
 This is a proof-of-concept implementation of a distributed web powered by torrents. Instead of the traditional client-server model, websites are loaded directly from torrents, allowing websites to be hosted in a distributed and redundant manner.
 

@@ -1,7 +1,19 @@
 import digestUrl from './digest-url'
-import {openTorrent} from './torrent'
+import {openTorrent, getTorrents} from './torrent'
 
-async function getTorrentDetails({url}) {
+function formatTorrent(torrent) {
+  return {
+    downloaded: torrent.downloaded,
+    uploaded: torrent.uploaded,
+    downloadSpeed: torrent.downloadSpeed,
+    uploadSpeed: torrent.uploadSpeed,
+    progress: torrent.progress,
+    infoHash: torrent.infoHash,
+    numPeers: torrent.numPeers,
+  }
+}
+
+async function getCurrentTorrent({url}) {
   let magnetUrl
   try {
     magnetUrl = digestUrl(url).magnetUrl
@@ -11,23 +23,26 @@ async function getTorrentDetails({url}) {
 
   const torrent = await openTorrent(magnetUrl)
 
+  return formatTorrent(torrent)
+}
+
+async function getTorrentStatuses({url}) {
+  const currentTorrent = await getCurrentTorrent({url})
+  let otherTorrents = await getTorrents()
+
+  otherTorrents = otherTorrents.map(formatTorrent).filter(torrent => {
+    console.log({torrent, currentTorrent})
+    return !currentTorrent || torrent.infoHash !== currentTorrent.infoHash
+  })
+
   return {
-    timeRemaining: torrent.timeRemaining,
-    downloaded: torrent.downloaded,
-    received: torrent.received,
-    uploaded: torrent.uploaded,
-    downloadSpeed: torrent.downloadSpeed,
-    uploadSpeed: torrent.uploadSpeed,
-    progress: torrent.progress,
-    ratio: torrent.ratio,
-    path: torrent.path,
-    infoHash: torrent.infoHash,
-    numPeers: torrent.numPeers,
+    currentTorrent,
+    otherTorrents
   }
 }
 
 const handlers = {
-  'get-torrent-details': getTorrentDetails
+  'get-torrent-statuses': getTorrentStatuses,
 }
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {

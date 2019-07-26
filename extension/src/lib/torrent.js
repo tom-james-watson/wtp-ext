@@ -5,6 +5,15 @@ const client = new WebTorrent()
 const torrents = {}
 
 /**
+ * Get all currently-seeded torrents
+ *
+ * @returns {Array} Torrents
+ */
+export function getTorrents() {
+  return Object.keys(torrents).map(key => torrents[key])
+}
+
+/**
  * Open a magnet URL as a webtorrent. Cache torrents in-memory.
  *
  * @param {Object} magnetUrl - Magnet URL of torrent
@@ -42,15 +51,19 @@ export function openTorrent(magnetUrl, loadIfNotCached=true) {
  * @returns {String} Path to file in torrent
  */
 export function getPath(path) {
+  console.log({path})
   // Remove preceding slash
   path = path.substr(1)
+  console.log({path})
 
   // Remove any query params
   path = path.split('?')[0]
   path = path.split('#')[0]
+  console.log({path})
 
   const parts = path.split('/')
   const fileName = parts[parts.length - 1]
+  console.log({parts, fileName})
 
   // Requests to paths without file extensions are assumed to be requests for a
   // `index.html` file in a folder at the given path, e.g. `/blog` will look

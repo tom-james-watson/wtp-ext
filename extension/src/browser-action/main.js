@@ -1,6 +1,6 @@
 import React from "react"
-import {Spinner, Icon, ProgressBar, Divider} from "@blueprintjs/core"
-import prettyBytes from "pretty-bytes"
+import Current from "./current"
+import Others from "./others"
 
 export default class Main extends React.Component {
   constructor() {
@@ -8,8 +8,8 @@ export default class Main extends React.Component {
 
     this.state = {
       loading: true,
-      progressEnded: false,
-      torrent: null
+      currentTorrent: null,
+      otherTorrents: null
     }
   }
 
@@ -18,84 +18,39 @@ export default class Main extends React.Component {
   }
 
   async sync() {
-    const {loading, progressEnded} = this.state
+    const {loading} = this.state
 
     const tab = (await browser.tabs.query({active: true, currentWindow: true}))[0]
 
-    const torrent = await browser.runtime.sendMessage({
-      type: "get-torrent-details",
+    const {currentTorrent, otherTorrents} = await browser.runtime.sendMessage({
+      type: "get-torrent-statuses",
       url: tab.url
     })
 
-    if (torrent && torrent.progress === 1 && !progressEnded) {
-      if (loading) {
-        this.setState({progressEnded: true})
-      } else {
-        setTimeout(() => {
-          this.setState({progressEnded: true})
-        }, 3000)
-      }
-    }
-
     this.setState({
       loading: false,
-      torrent
+      currentTorrent,
+      otherTorrents
     })
 
-    setTimeout(this.sync.bind(this), progressEnded ? 2000 : 500)
+    setTimeout(this.sync.bind(this), currentTorrent && currentTorrent.progress < 1 ? 500 : 2000)
   }
 
   render() {
-    const {loading, torrent, progressEnded} = this.state
+    const {loading, currentTorrent, otherTorrents} = this.state
+
+    console.log('Main', {loading, currentTorrent, otherTorrents})
 
     if (loading) {
-      return <Spinner id="spinner"/>
+      return null
     }
-
-    if (!torrent) {
-      return <h1>N/A</h1>
-    }
-
-    // timeRemaining: torrent.timeRemaining,
-    // downloaded: torrent.downloaded,
-    // received: torrent.received,
-    // uploaded: torrent.uploaded,
-    // downloadSpeed: torrent.downloadSpeed,
-    // uploadSpeed: torrent.uploadSpeed,
-    // progress: torrent.progress,
-    // ratio: torrent.ratio,
-    // path: torrent.path,
-    // infoHash: torrent.infoHash,
-    // numPeers: torrent.numPeers,
-
-    const peersIconIntent = torrent.numPeers > 0 ? "success" : "danger"
 
     return (
       <React.Fragment>
-        <p><strong>{torrent.infoHash}</strong></p>
-        <Divider />
-        <p className="meta">
-          <Icon icon="exchange" id="peers-icon" intent={peersIconIntent} size="large" />
-          Connected to {torrent.numPeers} peer{torrent.numPeers !== 1 && "s"}
-        </p>
-        {!progressEnded && (
-          <p>
-            <ProgressBar value={torrent.progress} intent="success" />
-          </p>
+        <Current torrent={currentTorrent} />
+        {(otherTorrents.length > 0 || !currentTorrent) && (
+          <Others torrents={otherTorrents} />
         )}
-        <p className="meta">
-          <Icon icon="upload" id="upload-icon" size="large" />
-          {prettyBytes(torrent.uploaded)}
-          ({prettyBytes(torrent.uploadSpeed)}/s)
-          <Icon icon="download" id="download-icon" size="large" />
-          {prettyBytes(torrent.received)}
-          &nbsp;
-          {torrent.progress < 1 && (
-            <React.Fragment>
-              ({prettyBytes(torrent.downloadSpeed)}/s)
-            </React.Fragment>
-          )}
-        </p>
       </React.Fragment>
     )
   }

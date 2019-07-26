@@ -1,6 +1,6 @@
 import React from "react"
-import Current from "./current"
-import Others from "./others"
+import {ButtonGroup, Button} from "@blueprintjs/core"
+import Torrent from "../manager/torrent"
 
 export default class Main extends React.Component {
   constructor() {
@@ -8,8 +8,7 @@ export default class Main extends React.Component {
 
     this.state = {
       loading: true,
-      currentTorrent: null,
-      otherTorrents: null
+      torrent: null
     }
   }
 
@@ -18,28 +17,27 @@ export default class Main extends React.Component {
   }
 
   async sync() {
-    const {loading} = this.state
-
     const tab = (await browser.tabs.query({active: true, currentWindow: true}))[0]
 
-    const {currentTorrent, otherTorrents} = await browser.runtime.sendMessage({
-      type: "get-torrent-statuses",
+    const torrent = await browser.runtime.sendMessage({
+      type: "get-current-torrent",
       url: tab.url
     })
 
     this.setState({
       loading: false,
-      currentTorrent,
-      otherTorrents
+      torrent
     })
 
-    setTimeout(this.sync.bind(this), currentTorrent && currentTorrent.progress < 1 ? 500 : 2000)
+    setTimeout(this.sync.bind(this), torrent && torrent.progress < 1 ? 500 : 2000)
+  }
+
+  openManager() {
+    browser.tabs.create({'url': browser.extension.getURL('/views/manager.html')})
   }
 
   render() {
-    const {loading, currentTorrent, otherTorrents} = this.state
-
-    console.log('Main', {loading, currentTorrent, otherTorrents})
+    const {loading, torrent} = this.state
 
     if (loading) {
       return null
@@ -47,10 +45,17 @@ export default class Main extends React.Component {
 
     return (
       <React.Fragment>
-        <Current torrent={currentTorrent} />
-        {(otherTorrents.length > 0 || !currentTorrent) && (
-          <Others torrents={otherTorrents} />
+        <Torrent torrent={torrent} />
+        {!torrent && (
+          <React.Fragment>
+            <h4>WebTorrent Protocol</h4>
+          </React.Fragment>
         )}
+        <ButtonGroup>
+          <Button intent="primary" onClick={this.openManager} id="manage-webtorrents">
+            Manage WebTorrents
+          </Button>
+        </ButtonGroup>
       </React.Fragment>
     )
   }

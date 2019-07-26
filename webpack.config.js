@@ -3,7 +3,8 @@ const path = require('path')
 module.exports = {
   entry: {
     'background': './extension/src/background.js',
-    'browser-action': './extension/src/browser-action/index.js'
+    'browser-action': './extension/src/browser-action/index.js',
+    'manager': './extension/src/manager/index.js'
   },
   devtool: 'source-map',
   module: {

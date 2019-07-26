@@ -24,6 +24,7 @@
     "libdweb": "https://github.com/mozilla/libdweb/tarball/79354c9b4ba991813b3a4d748e2359d088e589df/libdweb.tar.gz",
     "mime": "^2.4.0",
     "pretty-bytes": "^5.2.0",
+    "prop-types": "^15.7.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
     "web-ext": "^2.9.3",

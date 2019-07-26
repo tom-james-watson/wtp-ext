@@ -26,23 +26,14 @@ async function getCurrentTorrent({url}) {
   return formatTorrent(torrent)
 }
 
-async function getTorrentStatuses({url}) {
-  const currentTorrent = await getCurrentTorrent({url})
-  let otherTorrents = await getTorrents()
-
-  otherTorrents = otherTorrents.map(formatTorrent).filter(torrent => {
-    console.log({torrent, currentTorrent})
-    return !currentTorrent || torrent.infoHash !== currentTorrent.infoHash
-  })
-
-  return {
-    currentTorrent,
-    otherTorrents
-  }
+async function getOtherTorrents({url}) {
+  const torrents = await getTorrents()
+  return torrents.map(formatTorrent)
 }
 
 const handlers = {
-  'get-torrent-statuses': getTorrentStatuses,
+  'get-current-torrent': getCurrentTorrent,
+  'get-all-torrents': getOtherTorrents
 }
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {

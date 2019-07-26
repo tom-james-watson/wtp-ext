@@ -1,11 +1,10 @@
 body {
-  width: 400px;
-  min-height: 100px;
-  padding: 10px;
+  width: 600px;
+  margin: 50px auto;
 }
 
 p {
-  margin: 5px;
+  margin: 10px 0;
 }
 
 #peers-icon,
@@ -22,6 +21,7 @@ p {
   color: #5c7080;
 }
 
-#manage-webtorrents {
-  margin: 10px auto;
+.torrent-card {
+  margin: 20px 0;
+  padding: 10px 20px;
 }

@@ -8,11 +8,13 @@ import createMagnet from './create-magnet'
  * @returns {Object} {magnetUrl, path}
  */
 export default function digestUrl(url) {
-  const {
+  let {
     protocol,
     host: hash,
     path
   } = urlLib.parse(url)
+
+  path = path || '/'
 
   if (protocol !== 'wtp:') {
     throw new Error('Not a WTP URL')

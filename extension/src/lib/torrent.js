@@ -5,27 +5,19 @@ const client = new WebTorrent()
 const torrents = {}
 
 /**
- * Get all currently-seeded torrents
- *
- * @returns {Array} Torrents
- */
-export function getTorrents() {
-  return Object.keys(torrents).map(key => torrents[key])
-}
-
-/**
  * Open a magnet URL as a webtorrent. Cache torrents in-memory.
  *
- * @param {Object} magnetUrl - Magnet URL of torrent
+ * @param {Object} hash - The WTP hash
+ * @param {Object} magnetUrl - Full magnet URL of torrent
  * @returns {Object} Web Torrent
  */
-export function openTorrent(magnetUrl, loadIfNotCached=true) {
+export function openTorrent(hash, magnetUrl, loadIfNotCached=true) {
   logger.info(`Loading torrent for ${magnetUrl}`)
 
   return new Promise((resolve) => {
-    if (torrents[magnetUrl]) {
+    if (torrents[hash]) {
       logger.debug(`Torrent loaded from cache.`)
-      return resolve(torrents[magnetUrl])
+      return resolve(torrents[hash])
     }
 
     if (!loadIfNotCached) {
@@ -38,8 +30,38 @@ export function openTorrent(magnetUrl, loadIfNotCached=true) {
 
       checkSubfolders(torrent)
 
-      torrents[magnetUrl] = torrent
+      torrents[hash] = torrent
       resolve(torrent)
+    })
+  })
+}
+
+/**
+ * Get all currently-seeded torrents
+ *
+ * @returns {Array} Torrents
+ */
+export function getTorrents() {
+  return Object.keys(torrents).map(key => torrents[key])
+}
+
+/**
+ * Delete a torrent
+ *
+ * Destroy the webtorrent to stop seeding it and clear it from the torrent
+ * cache.
+ *
+ * @param {Object} hash - The hash of the torrent to delete
+ */
+export function deleteTorrent(hash) {
+  return new Promise((resolve, reject) => {
+    if (!torrents[hash]) {
+      return reject(new Error(`No torrent with hash ${hash}`))
+    }
+
+    torrents[hash].destroy(() =>{
+      delete torrents[hash]
+      resolve()
     })
   })
 }

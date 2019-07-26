@@ -22,5 +22,5 @@ export default function digestUrl(url) {
 
   const magnetUrl = createMagnet(hash)
 
-  return {magnetUrl, path}
+  return {hash, magnetUrl, path}
 }

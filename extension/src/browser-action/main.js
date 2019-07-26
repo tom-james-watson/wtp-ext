@@ -45,7 +45,7 @@ export default class Main extends React.Component {
 
     return (
       <React.Fragment>
-        <Torrent torrent={torrent} />
+        <Torrent torrent={torrent} browserAction />
         {!torrent && (
           <React.Fragment>
             <h4>WebTorrent Protocol</h4>

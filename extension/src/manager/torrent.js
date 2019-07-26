@@ -1,26 +1,41 @@
 import React from "react"
 import PropTypes from 'prop-types'
-import {Icon, ProgressBar} from "@blueprintjs/core"
+import {Icon, ProgressBar, Button} from "@blueprintjs/core"
 import prettyBytes from "pretty-bytes"
 
 Torrent.propTypes = {
-  torrent: PropTypes.object
+  torrent: PropTypes.object,
+  browserAction: true
 }
 
-export default function Torrent({torrent}) {
+export default function Torrent({torrent, browserAction}) {
   if (!torrent) {
     return null
   }
 
   const peersIconIntent = torrent.numPeers > 0 ? "success" : "danger"
 
-  //
-  // const openTorrent = () => {
-  //   browser.tabs.create({'url': `wtp://${torrent.infoHash}`})
-  // }
+  const openTorrent = () => {
+    // This is currently broken - https://github.com/mozilla/libdweb/issues/104
+    browser.tabs.create({'url': `wtp://${torrent.infoHash}`})
+  }
+
+  const destroyTorrent = async () => {
+    // Deal with returned `success` value - toast?
+    await browser.runtime.sendMessage({
+      type: "delete-torrent",
+      hash: torrent.infoHash
+    })
+  }
 
   return (
     <React.Fragment>
+      {!browserAction && (
+        <div className="torrent-menu">
+          <Button icon="trash" text="Delete" intent="danger" onClick={destroyTorrent} />
+          <Button text="View" intent="primary" onClick={openTorrent} />
+        </div>
+      )}
       <p><strong>{torrent.infoHash}</strong></p>
       <p className="meta">
         <Icon icon="exchange" id="peers-icon" intent={peersIconIntent} size="large" />

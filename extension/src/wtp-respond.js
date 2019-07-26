@@ -16,8 +16,8 @@ import getContentType from './lib/content-type'
 export default async function torrentRespond(request) {
   logger.debug('Returning wtp response')
 
-  const {magnetUrl, path} = digestUrl(request.url)
-  const torrent = await openTorrent(magnetUrl)
+  const {hash, magnetUrl, path} = digestUrl(request.url)
+  const torrent = await openTorrent(hash, magnetUrl)
 
   const file = getFile(torrent, path)
   const contentType = getContentType(path)

@@ -34,15 +34,21 @@ For example, here is a link to a blog post on my personal website:
 
 The extension will parse the magnet hash of the resource and load the torrent using the [WebTorrent](https://github.com/webtorrent/webtorrent) library. Requests to resources are then translated directly into lookups for files in the loaded torrent. The data of found files are then streamed into the request response.
 
-Visitors to the website also act as seeders, ensuring the website can scale as traffic grows.
+Visitors to the website also act as seeders, ensuring the website can scale as traffic grows. The number of seeders, along with stats on the state of the torrent download can be seen from the browser action popup:
+
+![Browser action popup showing torrent stats](./images/browser-action.png)
+
+Currently, torrents are automatically seeded for the duration of the browser session. Currently-seeded torrents and their stats can be seen from the torrent management page, where torrents can also be manually removed:
+
+![Torrent management page](./images/torrent-manager.png)
 
 ## Roadmap
 
 Here are the major pieces of functionality I would like to add:
 
 * Use DNS TXT record lookups to allow resolving of domains to hashes.
-* Add control over how long visited websites are seeded.
-* Have the extension display some indication of the state of the torrent when loading a WTP resource, such as number of seeders.
+* Use the [libdweb Filesystem API](https://github.com/mozilla/libdweb#filesystem-api) to allow for persistence of webtorrents accross browser sessions.
+* Add better control over how long visited websites are seeded. Currently they are all seeded for the duration of the browser session unless manually deleted from the torrent manager.
 * Add the ability to create and seed websites directly from the extension.
 
 ## Running the WebTorrent Protocol Handler extension

@@ -1,5 +1,6 @@
+import logger from './logger'
 import digestUrl from './digest-url'
-import {openTorrent, getTorrents} from './torrent'
+import {openTorrent, getTorrents, deleteTorrent} from './torrent'
 
 function formatTorrent(torrent) {
   return {
@@ -13,27 +14,36 @@ function formatTorrent(torrent) {
   }
 }
 
-async function getCurrentTorrent({url}) {
-  let magnetUrl
+async function onGetCurrentTorrent({url}) {
   try {
-    magnetUrl = digestUrl(url).magnetUrl
+    const {hash, magnetUrl} = digestUrl(url)
+    const torrent = await openTorrent(hash, magnetUrl, false)
+    return formatTorrent(torrent)
+
   } catch (err) {
     return null
   }
-
-  const torrent = await openTorrent(magnetUrl)
-
-  return formatTorrent(torrent)
 }
 
-async function getOtherTorrents({url}) {
+async function onGetAllTorrents({url}) {
   const torrents = await getTorrents()
   return torrents.map(formatTorrent)
 }
 
+async function onDeleteTorrent({hash}) {
+  try {
+    await deleteTorrent(hash)
+    return true
+  } catch (err) {
+    logger.error('Failed to delete torrent', {err})
+    return false
+  }
+}
+
 const handlers = {
-  'get-current-torrent': getCurrentTorrent,
-  'get-all-torrents': getOtherTorrents
+  'get-current-torrent': onGetCurrentTorrent,
+  'get-all-torrents': onGetAllTorrents,
+  'delete-torrent': onDeleteTorrent
 }
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {

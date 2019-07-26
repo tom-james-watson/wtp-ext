@@ -24,4 +24,19 @@ p {
 .torrent-card {
   margin: 20px 0;
   padding: 10px 20px;
+  position: relative;
+}
+
+.torrent-menu {
+  position: absolute;
+  top: 12px;
+  right: 10px;
+}
+
+.bp3-icon-more {
+  transform: rotateZ(90deg);
+}
+
+.torrent-menu .bp3-button {
+  margin-left: 10px;
 }

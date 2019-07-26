@@ -10,7 +10,7 @@ const torrents = {}
  * @param {Object} magnetUrl - Magnet URL of torrent
  * @returns {Object} Web Torrent
  */
-export function openTorrent(magnetUrl) {
+export function openTorrent(magnetUrl, loadIfNotCached=true) {
   logger.info(`Loading torrent for ${magnetUrl}`)
 
   return new Promise((resolve) => {
@@ -19,6 +19,11 @@ export function openTorrent(magnetUrl) {
       return resolve(torrents[magnetUrl])
     }
 
+    if (!loadIfNotCached) {
+      return resolve()
+    }
+
+    logger.debug('Loading torrent.')
     client.add(magnetUrl, function (torrent) {
       logger.debug(`Torrent loaded successfully.`)
 

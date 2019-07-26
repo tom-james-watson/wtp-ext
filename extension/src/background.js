@@ -1,6 +1,9 @@
+import '@babel/polyfill'
+
 import defaultRespond from './default-respond'
 import wtpRespond from './wtp-respond'
 import logger from './lib/logger'
+import './lib/messages'
 
 logger.info('Initialized wtp.')
 
@@ -39,7 +42,7 @@ function getHandler(request) {
  * @param {Object} request - Request object to be handled
  * @returns {Object} Response
  */
-browser.protocol.registerProtocol('wtp', request => {
+browser.protocol.registerProtocol('wtp', async request => {
   logger.info(`Handling request for ${request.url}`)
   const handler = getHandler(request)
   return handler(request)

@@ -9,6 +9,7 @@
     "ecmaVersion": 2018
   },
   "extends": [
-    "eslint-config-tomjwatson"
+    "eslint-config-tomjwatson",
+    "plugin:react/recommended"
   ]
 }

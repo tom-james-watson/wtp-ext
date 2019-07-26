@@ -4,8 +4,11 @@
   "name": "WebTorrent Protocol Handler",
   "description": "Access the WebTorrent Protocol distributed web.",
   "background": {
-    "scripts": ["/build/dist.js"]
+    "scripts": ["/build/background.js"]
   },
+  "permissions": [
+    "tabs"
+  ],
   "experiment_apis": {
     "protocol": {
       "schema": "libdweb/src/toolkit/components/extensions/schemas/protocol.json",
@@ -21,5 +24,16 @@
         "script": "libdweb/src/toolkit/components/extensions/parent/ext-protocol.js"
       }
     }
+  },
+  "page_action": {
+    "default_icon": {
+      "16": "assets/16x16.png",
+      "24": "assets/24x24.png",
+      "32": "assets/32x32.png",
+      "64": "assets/64x64.png"
+    },
+    "default_title": "WebTorrent Protocol",
+    "default_popup": "views/page_action.html",
+    "browser_style": true
   }
 }

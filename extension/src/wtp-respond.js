@@ -1,7 +1,8 @@
 import logger from './lib/logger'
-import createMagnet from './lib/create-magnet'
 import {openTorrent, getFile, streamFile} from './lib/torrent'
+import digestUrl from './lib/digest-url'
 import getContentType from './lib/content-type'
+import {showPageAction} from './lib/page-action'
 
 /**
  * Handler for valid WTP urls.
@@ -16,16 +17,17 @@ import getContentType from './lib/content-type'
 export default async function torrentRespond(request) {
   logger.debug('Returning wtp response')
 
-  const hash = request.url.substr(6, 40)
-  const magnetUrl = createMagnet(hash)
-  const path = request.url.substr(46)
-
+  const {magnetUrl, path} = digestUrl(request.url)
   const torrent = await openTorrent(magnetUrl)
 
   const file = getFile(torrent, path)
   const contentType = getContentType(path)
 
   logger.debug(`Returning ${path} with contentType ${contentType}`)
+
+  // By this point we know we have a valid file to display, so show the page
+  // action
+  showPageAction()
 
   return new Promise((resolve) => {
     resolve(new Response(

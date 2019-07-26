@@ -1,3 +1,4 @@
+import urlLib from 'url'
 import createMagnet from './create-magnet'
 
 /**
@@ -7,9 +8,17 @@ import createMagnet from './create-magnet'
  * @returns {Object} {magnetUrl, path}
  */
 export default function digestUrl(url) {
-  const hash = url.substr(6, 40)
+  const {
+    protocol,
+    host: hash,
+    path
+  } = urlLib.parse(url)
+
+  if (protocol !== 'wtp:') {
+    throw new Error('Not a WTP URL')
+  }
+
   const magnetUrl = createMagnet(hash)
-  const path = url.substr(46)
 
   return {magnetUrl, path}
 }

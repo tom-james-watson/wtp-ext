@@ -2,7 +2,6 @@ import logger from './lib/logger'
 import {openTorrent, getFile, streamFile} from './lib/torrent'
 import digestUrl from './lib/digest-url'
 import getContentType from './lib/content-type'
-import {showPageAction} from './lib/page-action'
 
 /**
  * Handler for valid WTP urls.
@@ -24,10 +23,6 @@ export default async function torrentRespond(request) {
   const contentType = getContentType(path)
 
   logger.debug(`Returning ${path} with contentType ${contentType}`)
-
-  // By this point we know we have a valid file to display, so show the page
-  // action
-  showPageAction()
 
   return new Promise((resolve) => {
     resolve(new Response(

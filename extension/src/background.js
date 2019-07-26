@@ -4,6 +4,7 @@ import defaultRespond from './default-respond'
 import wtpRespond from './wtp-respond'
 import logger from './lib/logger'
 import './lib/messages'
+import './lib/browser-action'
 
 logger.info('Initialized wtp.')
 

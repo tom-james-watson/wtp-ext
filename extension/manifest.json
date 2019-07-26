@@ -25,7 +25,7 @@
       }
     }
   },
-  "page_action": {
+  "browser_action": {
     "default_icon": {
       "16": "assets/16x16.png",
       "24": "assets/24x24.png",
@@ -33,7 +33,7 @@
       "64": "assets/64x64.png"
     },
     "default_title": "WebTorrent Protocol",
-    "default_popup": "views/page_action.html",
+    "default_popup": "views/browser_action.html",
     "browser_style": true
   }
 }

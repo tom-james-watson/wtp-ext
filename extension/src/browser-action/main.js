@@ -1,6 +1,6 @@
-import React from 'react'
+import React from "react"
 import {Spinner, Icon, ProgressBar, Divider} from "@blueprintjs/core"
-import prettyBytes from 'pretty-bytes'
+import prettyBytes from "pretty-bytes"
 
 export default class Main extends React.Component {
   constructor() {
@@ -13,13 +13,17 @@ export default class Main extends React.Component {
     }
   }
 
+  componentDidMount() {
+    this.sync.bind(this)()
+  }
+
   async sync() {
     const {loading, progressEnded} = this.state
 
     const tab = (await browser.tabs.query({active: true, currentWindow: true}))[0]
 
     const torrent = await browser.runtime.sendMessage({
-      type: 'get-torrent-details',
+      type: "get-torrent-details",
       url: tab.url
     })
 
@@ -41,15 +45,15 @@ export default class Main extends React.Component {
     setTimeout(this.sync.bind(this), progressEnded ? 2000 : 500)
   }
 
-  componentDidMount() {
-    this.sync.bind(this)()
-  }
-
   render() {
     const {loading, torrent, progressEnded} = this.state
 
     if (loading) {
       return <Spinner id="spinner"/>
+    }
+
+    if (!torrent) {
+      return <h1>N/A</h1>
     }
 
     // timeRemaining: torrent.timeRemaining,
@@ -64,7 +68,7 @@ export default class Main extends React.Component {
     // infoHash: torrent.infoHash,
     // numPeers: torrent.numPeers,
 
-    const peersIconIntent = torrent.numPeers > 0 ? 'success' : 'danger'
+    const peersIconIntent = torrent.numPeers > 0 ? "success" : "danger"
 
     return (
       <React.Fragment>
@@ -72,7 +76,7 @@ export default class Main extends React.Component {
         <Divider />
         <p className="meta">
           <Icon icon="exchange" id="peers-icon" intent={peersIconIntent} size="large" />
-          Connected to {torrent.numPeers} peer{torrent.numPeers !== 1 && 's'}
+          Connected to {torrent.numPeers} peer{torrent.numPeers !== 1 && "s"}
         </p>
         {!progressEnded && (
           <p>
@@ -85,6 +89,7 @@ export default class Main extends React.Component {
           ({prettyBytes(torrent.uploadSpeed)}/s)
           <Icon icon="download" id="download-icon" size="large" />
           {prettyBytes(torrent.received)}
+          &nbsp;
           {torrent.progress < 1 && (
             <React.Fragment>
               ({prettyBytes(torrent.downloadSpeed)}/s)

@@ -2,7 +2,13 @@ import digestUrl from './digest-url'
 import {openTorrent} from './torrent'
 
 async function getTorrentDetails({url}) {
-  const {magnetUrl} = digestUrl(url)
+  let magnetUrl
+  try {
+    magnetUrl = digestUrl(url).magnetUrl
+  } catch (err) {
+    return null
+  }
+
   const torrent = await openTorrent(magnetUrl)
 
   return {

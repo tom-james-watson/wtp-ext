@@ -34,6 +34,8 @@ For example, here is a link to a blog post on my personal website:
 
 The extension will parse the magnet hash of the resource and load the torrent using the [WebTorrent](https://github.com/webtorrent/webtorrent) library. Requests to resources are then translated directly into lookups for files in the loaded torrent. The data of found files are then streamed into the request response.
 
+The torrents themselves need no special file structure - any static site folder will load just as it would over HTTP.
+
 Visitors to the website also act as seeders, ensuring the website can scale as traffic grows. The number of seeders, along with stats on the state of the torrent download can be seen from the browser action popup:
 
 ![Browser action popup showing torrent stats](./images/browser-action.png)

@@ -4,7 +4,7 @@ import {Card, NonIdealState} from "@blueprintjs/core"
 import Torrent from './torrent'
 
 Torrents.propTypes = {
-  torrents: PropTypes.object
+  torrents: PropTypes.array
 }
 
 export default function Torrents({torrents}) {

@@ -135,7 +135,7 @@ exports.default = lib => {
     address() {
       const { address, port, family } = this._healthCheck().address;
       return {
-        address: host,
+        address,
         host: address,
         port,
         family: toNodeFamily(family)
@@ -169,8 +169,6 @@ exports.default = lib => {
     setMulticastTTL(ttl) {
       // noop
     }
-
-    setMulticastTTL(ttl) {}
 
     addMembership(multicastAddress, interfaceAddress) {
       const socket = this._healthCheck();
@@ -240,13 +238,10 @@ exports.default = lib => {
     async perform() {
       const { socket, address, port } = this;
       try {
-        console.log({address})
-        console.log(await browser.dns.resolve(address))
         const host = (await browser.dns.resolve(address)).addresses[0];
         const addressReuse = socket._reuseAddr;
         const options = port != undefined && port !== 0 ? { host, port, addressReuse } : { host, addressReuse };
 
-        console.log({options})
         const _handle = await lib.UDPSocket.create(options);
         socket._handle = _handle;
         socket.emit("listening", this);

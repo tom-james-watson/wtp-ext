@@ -5,7 +5,7 @@ import prettyBytes from "pretty-bytes"
 
 Torrent.propTypes = {
   torrent: PropTypes.object,
-  browserAction: true
+  browserAction: PropTypes.bool
 }
 
 export default function Torrent({torrent, browserAction}) {

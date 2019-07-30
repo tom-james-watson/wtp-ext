@@ -1,6 +1,5 @@
 const trackers = [
-  'wss://tracker.openwebtorrent.com',
-  'https://tracker.openwebtorrent.com'
+  'udp://tracker.opentrackr.org:1337'
 ]
 
 /**

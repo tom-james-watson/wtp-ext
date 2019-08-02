@@ -1,32 +1,13 @@
 import '@babel/polyfill'
 
-import defaultRespond from './default-respond'
-import wtpRespond from './wtp-respond'
 import logger from './lib/logger'
+import digestUrl from './lib/digest-url'
+import wtpRespond from './wtp-respond'
+import defaultRespond from './default-respond'
 import './lib/messages'
 import './lib/browser-action'
 
 logger.info('Initialized wtp.')
-
-/**
- * Get the handler that should be used for the given request.
- *
- * @param {Object} request - Request object
- * @returns {Function} Handler function for this request
- */
-function getHandler(request) {
-  if (request.url.length < 46) {
-    return defaultRespond
-  }
-
-  const hash = request.url.split('/')[2]
-
-  if (hash.length !== 40) {
-    return defaultRespond
-  }
-
-  return wtpRespond
-}
 
 /**
  * Register wtp:// protocol handler. This registers a callback that will be
@@ -45,6 +26,14 @@ function getHandler(request) {
  */
 browser.protocol.registerProtocol('wtp', async request => {
   logger.info(`Handling request for ${request.url}`)
-  const handler = getHandler(request)
-  return handler(request)
+
+  let parsedUrl
+  try {
+    parsedUrl = await digestUrl(request.url)
+  } catch (err) {
+    return defaultRespond(request)
+  }
+
+  const {hash, host, path} = parsedUrl
+  return wtpRespond(request, hash, host, path)
 })

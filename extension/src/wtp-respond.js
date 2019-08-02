@@ -1,23 +1,23 @@
 import logger from './lib/logger'
 import {openTorrent, getFile, streamFile} from './lib/torrent'
-import digestUrl from './lib/digest-url'
 import getContentType from './lib/content-type'
 
 /**
  * Handler for valid WTP urls.
  *
- * Convert the WTP hash into a magnet URL and open it as a webtorrent. Then,
- * based on the URL's path, load the correct file from the webtorrent. Stream
- * the content from the file into the response's content.
+ * Takes a WTP infohash and opens it as a webtorrent. Then, based on the URL's
+ * path, load the correct file from the webtorrent. Stream the content from the
+ * file into the response's content.
  *
  * @param {Object} request - Request object
+ * @param {String} hash - WTP infohash
+ * @param {String} host - Host of URL
+ * @param {String} path - Path of file to load
  * @returns {Object} WTP response
  */
-export default async function torrentRespond(request) {
+export default async function wtpRespond(request, hash, host, path) {
   logger.debug('Returning wtp response')
-
-  const {hash, magnetUrl, path} = digestUrl(request.url)
-  const torrent = await openTorrent(hash, magnetUrl)
+  const torrent = await openTorrent(hash, host)
 
   const file = getFile(torrent, path)
   const contentType = getContentType(path)

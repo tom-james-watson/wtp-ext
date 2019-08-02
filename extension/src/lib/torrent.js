@@ -1,18 +1,20 @@
 import WebTorrent from 'webtorrent'
+import createMagnet from './create-magnet'
 import logger from './logger'
 
 const client = new WebTorrent()
 const torrents = {}
 
 /**
- * Open a magnet URL as a webtorrent. Cache torrents in-memory.
+ * Open an infohash as a webtorrent. Cache torrents in-memory.
  *
  * @param {Object} hash - The WTP hash
- * @param {Object} magnetUrl - Full magnet URL of torrent
+ * @param {Object} host - The host of URL
+ * @param {Object} loadIfNotCached - Whether to load torrent if not cached
  * @returns {Object} Web Torrent
  */
-export function openTorrent(hash, magnetUrl, loadIfNotCached=true) {
-  logger.info(`Loading torrent for ${magnetUrl}`)
+export function openTorrent(hash, host=null, loadIfNotCached=true) {
+  logger.info(`Loading torrent for ${hash}`)
 
   return new Promise((resolve) => {
     if (torrents[hash]) {
@@ -24,11 +26,15 @@ export function openTorrent(hash, magnetUrl, loadIfNotCached=true) {
       return resolve()
     }
 
-    logger.debug('Loading torrent.')
+    const magnetUrl = createMagnet(hash)
+    logger.debug(`Loading torrent ${magnetUrl}`)
+
     client.add(magnetUrl, function (torrent) {
       logger.debug(`Torrent loaded successfully.`)
 
       checkSubfolders(torrent)
+
+      torrent.host = host
 
       torrents[hash] = torrent
       resolve(torrent)

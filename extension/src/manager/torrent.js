@@ -36,19 +36,24 @@ export default function Torrent({torrent, browserAction}) {
           <Button text="View" intent="primary" onClick={openTorrent} />
         </div>
       )}
-      <p><strong>{torrent.infoHash}</strong></p>
+      {torrent.infoHash === torrent.host ? (
+        <p><strong>{torrent.infoHash}</strong></p>
+      ) : (
+        <React.Fragment>
+          <p><strong>{torrent.host}</strong></p>
+          <p className="meta">{torrent.infoHash}</p>
+        </React.Fragment>
+      )}
       <p className="meta">
         <Icon icon="exchange" id="peers-icon" intent={peersIconIntent} size="large" />
         Connected to {torrent.numPeers} peer{torrent.numPeers !== 1 && "s"}
       </p>
-      <p>
-        <ProgressBar
-          value={torrent.progress}
-          intent="success"
-          animate={torrent.progress < 1}
-          stripes={torrent.progress < 1}
-        />
-      </p>
+      <ProgressBar
+        value={torrent.progress}
+        intent="success"
+        animate={torrent.progress < 1}
+        stripes={torrent.progress < 1}
+      />
       <p className="meta">
         <Icon icon="upload" id="upload-icon" size="large" />
         {prettyBytes(torrent.uploaded)} ({prettyBytes(torrent.uploadSpeed)}/s)

@@ -8,8 +8,8 @@ export async function ensureBrowserActionBadge(daemon=false) {
   const tab = (await browser.tabs.query({currentWindow: true, active: true}))[0]
 
   try {
-    const {hash, magnetUrl} = digestUrl(tab.url)
-    const torrent = await openTorrent(hash, magnetUrl)
+    const {hash, host} = await digestUrl(tab.url)
+    const torrent = await openTorrent(hash, host, false)
 
     if (torrent) {
       browser.browserAction.setBadgeText({

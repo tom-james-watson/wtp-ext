@@ -4,10 +4,10 @@
   "description": "Extension for the WebTorrent Protocol distributed web.",
   "main": "index.js",
   "scripts": {
-    "start": "cross-env MOZ_DISABLE_CONTENT_SANDBOX=1 web-ext run --firefox=nightly --browser-console --url about:debugging --source-dir extension",
+    "start": "cross-env MOZ_DISABLE_CONTENT_SANDBOX=1 web-ext run --firefox=nightly --browser-console --url about:debugging#/runtime/this-firefox --source-dir extension",
     "build": "cd extension && zip -1 -r ext.zip manifest.json libdweb/src/toolkit/components/extensions build views css assets && mv ext.zip ../artifacts/",
-    "bundle": "webpack -p",
-    "watch": "webpack --watch"
+    "bundle": "webpack -p --mode production",
+    "watch": "webpack --watch --mode development"
   },
   "author": "Tom Watson <tom@tomjwatson.com>",
   "license": "MIT",
@@ -18,6 +18,7 @@
     "@blueprintjs/core": "^3.17.1",
     "babel-loader": "^8.0.6",
     "cross-env": "^5.2.0",
+    "dat-dns": "^4.0.1",
     "eslint": "^5.11.0",
     "eslint-config-tomjwatson": "^0.2.1",
     "eslint-plugin-react": "^7.14.3",

@@ -26,13 +26,17 @@ The extension registers itself as a handler for the `wtp://` protocol, meaning r
 
 WTP URLs have the following structure:
 
-`wtp://<magnet hash>[/path/to/resource]`
+`wtp://<domain or magnet hash>[/path/to/resource]`
 
 For example, here is a link to a blog post on my personal website:
 
+`wtp://tomjwatson.com/blog/vim-tips/`
+
+The same page can also be accessed with the raw magnet hash:
+
 `wtp://951ead31d09e4049fc1f21f137e233dd0589fcbd/blog/vim-tips/`
 
-The extension will parse the magnet hash of the resource and load the torrent using the [WebTorrent](https://github.com/webtorrent/webtorrent) library. Requests to resources are then translated directly into lookups for files in the loaded torrent. The data of found files are then streamed into the request response.
+If the URL contains a domain, a DNS lookup over HTTPS will resolve it into a magnet hash ([see details](#domain-resolution-and-wtp)). The extension will parse the magnet hash of the resource and load the torrent using the [WebTorrent](https://github.com/webtorrent/webtorrent) library. Requests to resources are then translated directly into lookups for files in the loaded torrent. The data of found files are then streamed into the request response.
 
 The torrents themselves need no special file structure - any static site folder will load just as it would over HTTP.
 
@@ -44,11 +48,23 @@ Currently, torrents are automatically seeded for the duration of the browser ses
 
 ![Torrent management page](./images/torrent-manager.png)
 
+## Domain resolution
+
+As magnet hashes are not particularly human-friendly, WTP supports domain resolution over HTTPS.
+
+In order to use your domain with `wtp://`, simply add a `TXT` DNS record with the format `wtpkey=<hash>`. For example, the below example will resolve the root domain and the `www` subdomain to `951ead31d09e4049fc1f21f137e233dd0589fcbd`.
+
+```
+NAME | TYPE | DATA
+-----|------|------
+@    | TXT  | wtpkey=951ead31d09e4049fc1f21f137e233dd0589fcbd
+www  | TXT  | wtpkey=951ead31d09e4049fc1f21f137e233dd0589fcbd
+```
+
 ## Roadmap
 
 Here are the major pieces of functionality I would like to add:
 
-* Use DNS TXT record lookups to allow resolving of domains to hashes.
 * Use the [libdweb Filesystem API](https://github.com/mozilla/libdweb#filesystem-api) to allow for persistence of webtorrents accross browser sessions.
 * Add better control over how long visited websites are seeded. Currently they are all seeded for the duration of the browser session unless manually deleted from the torrent manager.
 * Add the ability to create and seed websites directly from the extension.

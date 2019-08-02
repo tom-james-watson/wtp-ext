@@ -10,14 +10,15 @@ function formatTorrent(torrent) {
     uploadSpeed: torrent.uploadSpeed,
     progress: torrent.progress,
     infoHash: torrent.infoHash,
+    host: torrent.host,
     numPeers: torrent.numPeers,
   }
 }
 
 async function onGetCurrentTorrent({url}) {
   try {
-    const {hash, magnetUrl} = digestUrl(url)
-    const torrent = await openTorrent(hash, magnetUrl, false)
+    const {hash, host} = await digestUrl(url)
+    const torrent = await openTorrent(hash, host, false)
     return formatTorrent(torrent)
 
   } catch (err) {

@@ -15,6 +15,7 @@ This repository contains a web extension that, using [libdweb](https://github.co
 ### Contents
 
 - [How WTP works](#how-wtp-works)
+  - [Domain Resolution](#domain-resolution)
 - [Roadmap](#roadmap)
 - [Running the WebTorrent Protocol Handler extension](#running-the-webtorrent-protocol-handler-extension)
 - [Loading and serving websites over WTP](#loading-and-serving-websites-over-wtp)
@@ -36,7 +37,7 @@ The same page can also be accessed with the raw magnet hash:
 
 `wtp://951ead31d09e4049fc1f21f137e233dd0589fcbd/blog/vim-tips/`
 
-If the URL contains a domain, a DNS lookup over HTTPS will resolve it into a magnet hash ([see details](#domain-resolution-and-wtp)). The extension will parse the magnet hash of the resource and load the torrent using the [WebTorrent](https://github.com/webtorrent/webtorrent) library. Requests to resources are then translated directly into lookups for files in the loaded torrent. The data of found files are then streamed into the request response.
+If the URL contains a domain, a DNS lookup over HTTPS will resolve it into a magnet hash ([see details](#domain-resolution)). The extension will parse the magnet hash of the resource and load the torrent using the [WebTorrent](https://github.com/webtorrent/webtorrent) library. Requests to resources are then translated directly into lookups for files in the loaded torrent. The data of found files are then streamed into the request response.
 
 The torrents themselves need no special file structure - any static site folder will load just as it would over HTTP.
 
@@ -48,7 +49,7 @@ Currently, torrents are automatically seeded for the duration of the browser ses
 
 ![Torrent management page](./images/torrent-manager.png)
 
-## Domain resolution
+### Domain resolution
 
 As magnet hashes are not particularly human-friendly, WTP supports domain resolution over HTTPS.
 

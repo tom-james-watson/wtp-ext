@@ -45,7 +45,7 @@ Visitors to the website also act as seeders, ensuring the website can scale as t
 
 ![Browser action popup showing torrent stats](./images/browser-action.png)
 
-Currently, torrents are automatically seeded for the duration of the browser session. Currently-seeded torrents and their stats can be seen from the torrent management page, where torrents can also be manually removed:
+Currently, torrents are automatically seeded forever. Currently-seeded torrents and their stats can be seen from the torrent management page, where torrents can also be manually removed:
 
 ![Torrent management page](./images/torrent-manager.png)
 
@@ -66,8 +66,7 @@ www  | TXT  | wtpkey=951ead31d09e4049fc1f21f137e233dd0589fcbd
 
 Here are the major pieces of functionality I would like to add:
 
-* Use the [libdweb Filesystem API](https://github.com/mozilla/libdweb#filesystem-api) to allow for persistence of webtorrents accross browser sessions.
-* Add better control over how long visited websites are seeded. Currently they are all seeded for the duration of the browser session unless manually deleted from the torrent manager.
+* Add better control over how long visited websites are seeded. Currently they are all seeded forever unless manually deleted from the torrent manager.
 * Add the ability to create and seed websites directly from the extension.
 
 ## Running the WebTorrent Protocol Handler extension

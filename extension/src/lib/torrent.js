@@ -1,6 +1,7 @@
 import WebTorrent from 'webtorrent'
 import createMagnet from './create-magnet'
 import logger from './logger'
+import BrowserFSChunkStore from './browser-filesystem-chunk-storage'
 
 const client = new WebTorrent()
 const torrents = {}
@@ -29,7 +30,7 @@ export function openTorrent(hash, host=null, loadIfNotCached=true) {
     const magnetUrl = createMagnet(hash)
     logger.debug(`Loading torrent ${magnetUrl}`)
 
-    client.add(magnetUrl, function (torrent) {
+    client.add(magnetUrl, {store: BrowserFSChunkStore}, function (torrent) {
       logger.debug(`Torrent loaded successfully.`)
 
       checkSubfolders(torrent)

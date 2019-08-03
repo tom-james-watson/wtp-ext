@@ -23,6 +23,19 @@
         "paths": [["protocol"]],
         "script": "libdweb/src/toolkit/components/extensions/parent/ext-protocol.js"
       }
+    },
+    "FileSystem": {
+      "schema": "libdweb/src/toolkit/components/extensions/schemas/fs.json",
+      "child": {
+        "scopes": ["addon_child"],
+        "paths": [["FileSystem"]],
+        "script": "libdweb/src/toolkit/components/extensions/child/ext-fs.js"
+      },
+      "parent": {
+        "scopes": ["addon_parent"],
+        "paths": [["FileSystem"]],
+        "script": "libdweb/src/toolkit/components/extensions/parent/ext-fs.js"
+      }
     }
   },
   "browser_action": {

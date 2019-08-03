@@ -34,7 +34,11 @@ export async function ensureBrowserActionBadge(daemon=false) {
   }
 }
 
-browser.tabs.onUpdated.addListener(ensureBrowserActionBadge)
-browser.tabs.onActivated.addListener(ensureBrowserActionBadge)
+browser.tabs.onUpdated.addListener(() => {
+  ensureBrowserActionBadge()
+})
+browser.tabs.onActivated.addListener(() => {
+  ensureBrowserActionBadge()
+})
 
 ensureBrowserActionBadge(true)

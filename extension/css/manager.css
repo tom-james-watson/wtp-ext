@@ -3,8 +3,8 @@ body {
   margin: 50px auto;
 }
 
-p {
-  margin: 10px 0;
+.torrent-section {
+  margin: 15px 0;
 }
 
 #peers-icon,
@@ -15,6 +15,10 @@ p {
 
 #download-icon {
   margin-left: 15px;
+}
+
+.bp3-progress-bar {
+  margin: -10px 0;
 }
 
 .meta {

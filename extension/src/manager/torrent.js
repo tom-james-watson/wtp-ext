@@ -31,24 +31,24 @@ export default function Torrent({torrent, browserAction, toggleSeed, destroyTorr
         </div>
       )}
       {torrent.infoHash === torrent.host ? (
-        <p><strong>{torrent.infoHash}</strong></p>
+        <div className="torrent-section"><strong>{torrent.infoHash}</strong></div>
       ) : (
         <React.Fragment>
-          <p><strong>{torrent.host}</strong></p>
-          <p className="meta">{torrent.infoHash}</p>
+          <div className="torrent-section"><strong>{torrent.host}</strong></div>
+          <div className="torrent-section meta">{torrent.infoHash}</div>
         </React.Fragment>
       )}
-      <p className="meta">
+      <div className="torrent-section meta">
         <Icon icon="exchange" id="peers-icon" intent={peersIconIntent} size="large" />
         Connected to {torrent.numPeers} peer{torrent.numPeers !== 1 && "s"}
-      </p>
+      </div>
       <ProgressBar
         value={torrent.progress}
         intent="success"
         animate={torrent.progress < 1}
         stripes={torrent.progress < 1}
       />
-      <p className="meta">
+      <div className="torrent-section meta">
         <Icon icon="upload" id="upload-icon" size="large" />
         {prettyBytes(torrent.uploaded)} ({prettyBytes(torrent.uploadSpeed)}/s)
         <Icon icon="download" id="download-icon" size="large" />
@@ -59,10 +59,10 @@ export default function Torrent({torrent, browserAction, toggleSeed, destroyTorr
             ({prettyBytes(torrent.downloadSpeed)}/s)
           </React.Fragment>
         )}
-      </p>
-      <p>
+      </div>
+      <div className="torrent-section meta">
         <Switch checked={torrent.seed} label="Permanently seed site" onChange={() => toggleSeed(torrent)} />
-      </p>
+      </div>
     </React.Fragment>
   )
 }

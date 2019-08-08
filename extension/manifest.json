@@ -46,7 +46,6 @@
       "64": "assets/64x64.png"
     },
     "default_title": "WebTorrent Protocol",
-    "default_popup": "views/browser_action.html",
-    "browser_style": true
+    "default_popup": "views/browser_action.html"
   }
 }

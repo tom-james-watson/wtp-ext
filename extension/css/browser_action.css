@@ -1,11 +1,11 @@
 body {
-  width: 370px;
+  width: 360px;
   min-height: 100px;
-  padding: 10px;
+  padding: 0px 10px;
 }
 
-p {
-  margin: 5px;
+.torrent-section {
+  margin: 15px 0px;
 }
 
 #peers-icon,
@@ -18,10 +18,19 @@ p {
   margin-left: 15px;
 }
 
+.bp3-progress-bar {
+  margin: -10px 0;
+}
+
 .meta {
   color: #5c7080;
 }
 
+.bp3-button-group {
+  width: 100%;
+  text-align: center;
+}
+
 #manage-webtorrents {
-  margin: 10px auto;
+  margin: 5px auto;
 }

@@ -1,5 +1,5 @@
 import digestUrl from './digest-url'
-import {openTorrent} from './torrent'
+import {getTorrent} from './torrent'
 
 /**
  * Ensure the browser action badge is showing the right information
@@ -8,8 +8,8 @@ export async function ensureBrowserActionBadge(daemon=false) {
   const tab = (await browser.tabs.query({currentWindow: true, active: true}))[0]
 
   try {
-    const {hash, host} = await digestUrl(tab.url)
-    const torrent = await openTorrent(hash, host, false)
+    const {hash} = await digestUrl(tab.url)
+    const torrent = await getTorrent(hash)
 
     if (torrent && !torrent.loading) {
       browser.browserAction.setBadgeText({

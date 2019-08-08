@@ -19,39 +19,43 @@ export async function init() {
   const storedTorrents = await localforage.getItem('stored-torrents') || {}
 
   for (const hash in storedTorrents) {
-    // Don't block event loop - we can lazily load torrents
-    openTorrent(hash, storedTorrents[hash].host, true, storedTorrents[hash].seed)
+    openTorrent(hash, storedTorrents[hash].host, storedTorrents[hash].seed)
   }
 }
 
 /**
- * Open an infohash as a webtorrent. Cache torrents in-memory.
+ * Get a torrent for a infohash.
+ *
+ * @param {Object} hash - The WTP hash
+ * @returns {Object} Web Torrent
+ */
+export function getTorrent(hash) {
+  if (!(hash in torrents)) {
+    return null
+  }
+
+  return torrents[hash]
+}
+
+/**
+ * Open an infohash as a webtorrent.
+ *
+ * Torrents are cached in memory. Also, if multiple requests come in in
+ * parallel for the same torrent, use the same promise instead of trying to
+ * open the torrent several times.
  *
  * @param {Object} hash - The WTP hash
  * @param {Object} host - The host of URL
- * @param {Object} loadIfNotCached - Whether to load torrent if not cached
  * @param {Object} seed - Whether to mark the torrent as seeded
  * @returns {Object} Web Torrent
  */
-export function openTorrent(hash, host=null, loadIfNotCached=true, seed=false) {
-  if (torrents[hash] && !torrents[hash].loading) {
-    // Torrent is fully loaded
-    return torrents[hash]
-  }
-
-  if (torrents[hash] && !loadIfNotCached) {
-    // Torrent is loading and we just want the info, not to load the torrent
-    return torrents[hash]
-  }
-
-  if (!loadIfNotCached) {
-    // Torrent
-    // torrent object
-    return
-  }
-
+export function openTorrent(hash, host=null, seed=false) {
   if (torrents[hash]) {
-    return torrents[hash].addPromise
+    if (torrents[hash].loading) {
+      return torrents[hash].addPromise
+    } else {
+      return torrents[hash]
+    }
   }
 
   const addPromise = new Promise(async (resolve) => {
@@ -66,6 +70,7 @@ export function openTorrent(hash, host=null, loadIfNotCached=true, seed=false) {
       torrent.host = host
       torrent.seed = seed
       torrent.loading = false
+      delete torrent.addPromise
       torrents[hash] = torrent
 
       const storedTorrents = await localforage.getItem('stored-torrents') || {}

@@ -1,6 +1,6 @@
 import logger from './logger'
 import digestUrl from './digest-url'
-import {openTorrent, getTorrents, deleteTorrent, toggleSeedTorrent} from './torrent'
+import {getTorrent, getTorrents, deleteTorrent, toggleSeedTorrent} from './torrent'
 
 function formatTorrent(torrent) {
   return {
@@ -19,8 +19,8 @@ function formatTorrent(torrent) {
 
 async function onGetCurrentTorrent({url}) {
   try {
-    const {hash, host} = await digestUrl(url)
-    const torrent = await openTorrent(hash, host, false)
+    const {hash} = await digestUrl(url)
+    const torrent = await getTorrent(hash)
     return formatTorrent(torrent)
   } catch (err) {
     return null

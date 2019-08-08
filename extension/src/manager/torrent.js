@@ -1,14 +1,16 @@
 import React from "react"
 import PropTypes from 'prop-types'
-import {Icon, ProgressBar, Button} from "@blueprintjs/core"
+import {Icon, ProgressBar, Button, Switch} from "@blueprintjs/core"
 import prettyBytes from "pretty-bytes"
 
 Torrent.propTypes = {
   torrent: PropTypes.object,
-  browserAction: PropTypes.bool
+  browserAction: PropTypes.bool,
+  toggleSeed: PropTypes.func,
+  destroyTorrent: PropTypes.func
 }
 
-export default function Torrent({torrent, browserAction}) {
+export default function Torrent({torrent, browserAction, toggleSeed, destroyTorrent}) {
   if (!torrent) {
     return null
   }
@@ -20,19 +22,11 @@ export default function Torrent({torrent, browserAction}) {
     browser.tabs.create({'url': `wtp://${torrent.infoHash}`})
   }
 
-  const destroyTorrent = async () => {
-    // Deal with returned `success` value - toast?
-    await browser.runtime.sendMessage({
-      type: "delete-torrent",
-      hash: torrent.infoHash
-    })
-  }
-
   return (
     <React.Fragment>
       {!browserAction && (
         <div className="torrent-menu">
-          <Button icon="trash" text="Delete" intent="danger" onClick={destroyTorrent} />
+          <Button icon="trash" text="Delete" intent="danger" onClick={() => destroyTorrent(torrent)} />
           <Button text="View" intent="primary" onClick={openTorrent} />
         </div>
       )}
@@ -65,6 +59,9 @@ export default function Torrent({torrent, browserAction}) {
             ({prettyBytes(torrent.downloadSpeed)}/s)
           </React.Fragment>
         )}
+      </p>
+      <p>
+        <Switch checked={torrent.seed} label="Permanently seed site" onChange={() => toggleSeed(torrent)} />
       </p>
     </React.Fragment>
   )

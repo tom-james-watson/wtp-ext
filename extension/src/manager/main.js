@@ -12,7 +12,9 @@ export default class Main extends React.Component {
   }
 
   componentDidMount() {
-    this.sync.bind(this)()
+    this.sync = this.sync.bind(this)
+    setInterval(this.sync, 2000)
+    this.sync()
   }
 
   async sync() {
@@ -24,8 +26,26 @@ export default class Main extends React.Component {
       loading: false,
       torrents
     })
+  }
 
-    setTimeout(this.sync.bind(this), 2000)
+  async toggleSeed(torrent) {
+    await browser.runtime.sendMessage({
+      type: "toggle-seed-torrent",
+      hash: torrent.infoHash,
+      seed: !torrent.seed
+    })
+
+    await this.sync()
+  }
+
+  async destroyTorrent(torrent) {
+    // Deal with returned `success` value - toast?
+    await browser.runtime.sendMessage({
+      type: "delete-torrent",
+      hash: torrent.infoHash
+    })
+
+    await this.sync()
   }
 
   render() {
@@ -38,7 +58,11 @@ export default class Main extends React.Component {
     return (
       <React.Fragment>
         <h1>WebTorrent Manager</h1>
-        <Torrents torrents={torrents} />
+        <Torrents
+          torrents={torrents}
+          toggleSeed={this.toggleSeed.bind(this)}
+          destroyTorrent={this.destroyTorrent.bind(this)}
+        />
       </React.Fragment>
     )
   }

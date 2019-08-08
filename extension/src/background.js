@@ -4,8 +4,10 @@ import logger from './lib/logger'
 import digestUrl from './lib/digest-url'
 import wtpRespond from './wtp-respond'
 import defaultRespond from './default-respond'
+import {init} from './lib/torrent'
 import './lib/messages'
 import './lib/browser-action'
+import './lib/cache'
 
 logger.info('Initialized wtp.')
 
@@ -24,16 +26,22 @@ logger.info('Initialized wtp.')
  * @param {Object} request - Request object to be handled
  * @returns {Object} Response
  */
-browser.protocol.registerProtocol('wtp', async request => {
-  logger.info(`Handling request for ${request.url}`)
+async function launch() {
+  await init()
 
-  let parsedUrl
-  try {
-    parsedUrl = await digestUrl(request.url)
-  } catch (err) {
-    return defaultRespond(request)
-  }
+  browser.protocol.registerProtocol('wtp', async request => {
+    logger.info(`Handling request for ${request.url}`)
 
-  const {hash, host, path} = parsedUrl
-  return wtpRespond(request, hash, host, path)
-})
+    let parsedUrl
+    try {
+      parsedUrl = await digestUrl(request.url)
+    } catch (err) {
+      return defaultRespond(request)
+    }
+
+    const {hash, host, path} = parsedUrl
+    return wtpRespond(request, hash, host, path)
+  })
+}
+
+launch()

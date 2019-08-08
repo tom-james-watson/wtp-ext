@@ -13,7 +13,9 @@ export default class Main extends React.Component {
   }
 
   componentDidMount() {
-    this.sync.bind(this)()
+    this.sync = this.sync.bind(this)
+    setInterval(this.sync, 500)
+    this.sync()
   }
 
   async sync() {
@@ -28,12 +30,22 @@ export default class Main extends React.Component {
       loading: false,
       torrent
     })
-
-    setTimeout(this.sync.bind(this), torrent && torrent.progress < 1 ? 500 : 2000)
   }
 
   openManager() {
     browser.tabs.create({'url': browser.extension.getURL('/views/manager.html')})
+  }
+
+  async toggleSeed() {
+    const {torrent} = this.state
+
+    await browser.runtime.sendMessage({
+      type: "toggle-seed-torrent",
+      hash: torrent.infoHash,
+      seed: !torrent.seed
+    })
+
+    await this.sync()
   }
 
   render() {
@@ -45,7 +57,7 @@ export default class Main extends React.Component {
 
     return (
       <React.Fragment>
-        <Torrent torrent={torrent} browserAction />
+        <Torrent torrent={torrent} browserAction toggleSeed={this.toggleSeed.bind(this)}/>
         {!torrent && (
           <React.Fragment>
             <h4>WebTorrent Protocol</h4>

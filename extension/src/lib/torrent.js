@@ -1,4 +1,5 @@
 import WebTorrent from 'webtorrent'
+import localforage from 'localforage'
 import createMagnet from './create-magnet'
 import logger from './logger'
 import WebChunkStore from './web-chunk-store'
@@ -7,16 +8,35 @@ const client = new WebTorrent()
 const torrents = {}
 
 /**
+ * Perform necessary initialization of localforage and load stored torrents.
+ */
+export async function init() {
+  localforage.config({
+    name: 'WTP',
+    description: 'WTP torrent store'
+  })
+
+  const storedTorrents = await localforage.getItem('stored-torrents') || {}
+
+  for (const hash in storedTorrents) {
+    // Don't block event loop - we can lazily load torrents
+    openTorrent(hash, storedTorrents[hash].host, true, true)
+  }
+}
+
+/**
  * Open an infohash as a webtorrent. Cache torrents in-memory.
  *
  * @param {Object} hash - The WTP hash
  * @param {Object} host - The host of URL
  * @param {Object} loadIfNotCached - Whether to load torrent if not cached
+ * @param {Object} seed - Whether to mark the torrent as seeded
  * @returns {Object} Web Torrent
  */
-export function openTorrent(hash, host=null, loadIfNotCached=true) {
-  return new Promise((resolve) => {
+export function openTorrent(hash, host=null, loadIfNotCached=true, seed=false) {
+  return new Promise(async (resolve) => {
     if (torrents[hash]) {
+      logger.debug(`Returning ${hash} from cache`)
       return resolve(torrents[hash])
     }
 
@@ -25,16 +45,24 @@ export function openTorrent(hash, host=null, loadIfNotCached=true) {
     }
 
     const magnetUrl = createMagnet(hash)
-    logger.info(`Loading torrent ${magnetUrl}`)
+    logger.info(`Loading ${hash}`)
 
-    client.add(magnetUrl, {store: WebChunkStore}, function (torrent) {
-      logger.debug(`Torrent loaded successfully.`)
+    // TODO - cache add promises and return existing add promise if it exists
+    client.add(magnetUrl, {store: WebChunkStore}, async (torrent) => {
+      logger.debug(`Successfully loaded ${hash}`)
 
       checkSubfolders(torrent)
 
       torrent.host = host
-
+      torrent.seed = seed
       torrents[hash] = torrent
+
+      const storedTorrents = await localforage.getItem('stored-torrents') || {}
+      if (!(hash in storedTorrents)) {
+        storedTorrents[hash] = {hash, host, seed: false, lastOpen: new Date().toISOString()}
+        await localforage.setItem('stored-torrents', storedTorrents)
+      }
+
       resolve(torrent)
     })
   })
@@ -58,16 +86,47 @@ export function getTorrents() {
  * @param {Object} hash - The hash of the torrent to delete
  */
 export function deleteTorrent(hash) {
+  logger.info(`Deleting ${hash}`)
+
   return new Promise((resolve, reject) => {
     if (!torrents[hash]) {
       return reject(new Error(`No torrent with hash ${hash}`))
     }
 
-    torrents[hash].destroy(() =>{
+    torrents[hash].destroy(async () =>{
       delete torrents[hash]
+
+      const storedTorrents = await localforage.getItem('stored-torrents') || {}
+      delete storedTorrents[hash]
+      await localforage.setItem('stored-torrents', storedTorrents)
+
       resolve()
     })
   })
+}
+
+/**
+ * Toggle whether to permanently seed a torrent.
+ *
+ * @param {Object} hash - The hash of the torrent to seed
+ * @param {Boolean} seed - Whether to seed or not
+ */
+export async function toggleSeedTorrent(hash, seed) {
+  if (!torrents[hash]) {
+    throw new Error(`No torrent with hash ${hash}`)
+  }
+
+  if (seed) {
+    logger.info(`Seeding ${hash}`)
+  } else {
+    logger.info(`Stopping seeding ${hash}`)
+  }
+
+  torrents[hash].seed = seed
+
+  const storedTorrents = await localforage.getItem('stored-torrents') || {}
+  storedTorrents[hash].seed = seed
+  await localforage.setItem('stored-torrents', storedTorrents)
 }
 
 /**

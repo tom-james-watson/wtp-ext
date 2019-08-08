@@ -23,6 +23,7 @@
     "eslint-config-tomjwatson": "^0.2.1",
     "eslint-plugin-react": "^7.14.3",
     "libdweb": "https://github.com/mozilla/libdweb/tarball/79354c9b4ba991813b3a4d748e2359d088e589df/libdweb.tar.gz",
+    "localforage": "^1.7.3",
     "mime": "^2.4.0",
     "parallel": "^1.2.0",
     "pretty-bytes": "^5.2.0",

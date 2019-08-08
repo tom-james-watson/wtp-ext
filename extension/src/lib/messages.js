@@ -1,6 +1,6 @@
 import logger from './logger'
 import digestUrl from './digest-url'
-import {openTorrent, getTorrents, deleteTorrent} from './torrent'
+import {openTorrent, getTorrents, deleteTorrent, toggleSeedTorrent} from './torrent'
 
 function formatTorrent(torrent) {
   return {
@@ -12,6 +12,7 @@ function formatTorrent(torrent) {
     infoHash: torrent.infoHash,
     host: torrent.host,
     numPeers: torrent.numPeers,
+    seed: torrent.seed,
   }
 }
 
@@ -41,10 +42,15 @@ async function onDeleteTorrent({hash}) {
   }
 }
 
+async function onToggleSeedTorrent({hash, seed}) {
+  await toggleSeedTorrent(hash, seed)
+}
+
 const handlers = {
   'get-current-torrent': onGetCurrentTorrent,
   'get-all-torrents': onGetAllTorrents,
-  'delete-torrent': onDeleteTorrent
+  'delete-torrent': onDeleteTorrent,
+  'toggle-seed-torrent': onToggleSeedTorrent
 }
 
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {

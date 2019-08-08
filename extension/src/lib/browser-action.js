@@ -11,14 +11,23 @@ export async function ensureBrowserActionBadge(daemon=false) {
     const {hash, host} = await digestUrl(tab.url)
     const torrent = await openTorrent(hash, host, false)
 
-    if (torrent) {
+    if (torrent && !torrent.loading) {
       browser.browserAction.setBadgeText({
-        text: String(torrent.numPeers),
-        tabId: tab.id
+        tabId: tab.id,
+        text: String(torrent.numPeers)
       })
       browser.browserAction.setBadgeBackgroundColor({
-        color: torrent.numPeers > 0 ? "green" : "red",
-        tabId: tab.id
+        tabId: tab.id,
+        color: torrent.numPeers > 0 ? "green" : "red"
+      })
+    } else {
+      browser.browserAction.setBadgeText({
+        tabId: tab.id,
+        text: null
+      })
+      browser.browserAction.setBadgeBackgroundColor({
+        tabId: tab.id,
+        color: null
       })
     }
   } catch (err) {

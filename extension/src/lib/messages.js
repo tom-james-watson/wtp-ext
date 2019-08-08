@@ -13,6 +13,7 @@ function formatTorrent(torrent) {
     host: torrent.host,
     numPeers: torrent.numPeers,
     seed: torrent.seed,
+    loading: torrent.loading,
   }
 }
 
@@ -21,7 +22,6 @@ async function onGetCurrentTorrent({url}) {
     const {hash, host} = await digestUrl(url)
     const torrent = await openTorrent(hash, host, false)
     return formatTorrent(torrent)
-
   } catch (err) {
     return null
   }

@@ -20,7 +20,7 @@ export async function init() {
 
   for (const hash in storedTorrents) {
     // Don't block event loop - we can lazily load torrents
-    openTorrent(hash, storedTorrents[hash].host, true, true)
+    openTorrent(hash, storedTorrents[hash].host, true, storedTorrents[hash].seed)
   }
 }
 
@@ -34,20 +34,30 @@ export async function init() {
  * @returns {Object} Web Torrent
  */
 export function openTorrent(hash, host=null, loadIfNotCached=true, seed=false) {
-  return new Promise(async (resolve) => {
-    if (torrents[hash]) {
-      logger.debug(`Returning ${hash} from cache`)
-      return resolve(torrents[hash])
-    }
+  if (torrents[hash] && !torrents[hash].loading) {
+    // Torrent is fully loaded
+    return torrents[hash]
+  }
 
-    if (!loadIfNotCached) {
-      return resolve()
-    }
+  if (torrents[hash] && !loadIfNotCached) {
+    // Torrent is loading and we just want the info, not to load the torrent
+    return torrents[hash]
+  }
 
+  if (!loadIfNotCached) {
+    // Torrent
+    // torrent object
+    return
+  }
+
+  if (torrents[hash]) {
+    return torrents[hash].addPromise
+  }
+
+  const addPromise = new Promise(async (resolve) => {
     const magnetUrl = createMagnet(hash)
     logger.info(`Loading ${hash}`)
 
-    // TODO - cache add promises and return existing add promise if it exists
     client.add(magnetUrl, {store: WebChunkStore}, async (torrent) => {
       logger.debug(`Successfully loaded ${hash}`)
 
@@ -55,6 +65,7 @@ export function openTorrent(hash, host=null, loadIfNotCached=true, seed=false) {
 
       torrent.host = host
       torrent.seed = seed
+      torrent.loading = false
       torrents[hash] = torrent
 
       const storedTorrents = await localforage.getItem('stored-torrents') || {}
@@ -66,6 +77,16 @@ export function openTorrent(hash, host=null, loadIfNotCached=true, seed=false) {
       resolve(torrent)
     })
   })
+
+  torrents[hash] = {
+    infoHash: hash,
+    host,
+    seed,
+    loading: true,
+    addPromise
+  }
+
+  return addPromise
 }
 
 /**
@@ -93,7 +114,7 @@ export function deleteTorrent(hash) {
       return reject(new Error(`No torrent with hash ${hash}`))
     }
 
-    torrents[hash].destroy(async () =>{
+    async function deleteLocal() {
       delete torrents[hash]
 
       const storedTorrents = await localforage.getItem('stored-torrents') || {}
@@ -101,7 +122,14 @@ export function deleteTorrent(hash) {
       await localforage.setItem('stored-torrents', storedTorrents)
 
       resolve()
-    })
+    }
+
+    if (torrents[hash].destroy) {
+      torrents[hash].destroy(deleteLocal)
+    } else {
+      // The torrent never finished loading, just directly delete the local copy
+      deleteLocal()
+    }
   })
 }
 

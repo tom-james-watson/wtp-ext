@@ -60,7 +60,7 @@ export default class Main extends React.Component {
         <Torrent torrent={torrent} browserAction toggleSeed={this.toggleSeed.bind(this)}/>
         {!torrent && (
           <React.Fragment>
-            <h4>WebTorrent Protocol</h4>
+            <div className="torrent-section"><strong>WebTorrent Protocol</strong></div>
           </React.Fragment>
         )}
         <ButtonGroup>

@@ -1,5 +1,6 @@
 import React from "react"
 import Torrents from "./torrents"
+import NonIdealState from "./non-ideal-state"
 
 export default class Main extends React.Component {
   constructor() {
@@ -7,7 +8,8 @@ export default class Main extends React.Component {
 
     this.state = {
       loading: true,
-      torrents: []
+      seededTorrents: [],
+      cachedTorrents: []
     }
   }
 
@@ -22,9 +24,18 @@ export default class Main extends React.Component {
       type: "get-all-torrents",
     })
 
+    const seededTorrents = torrents.filter((torrent) => {
+      return torrent.seed === true
+    })
+
+    const cachedTorrents = torrents.filter((torrent) => {
+      return torrent.seed === false
+    })
+
     this.setState({
       loading: false,
-      torrents
+      seededTorrents,
+      cachedTorrents
     })
   }
 
@@ -49,7 +60,7 @@ export default class Main extends React.Component {
   }
 
   render() {
-    const {loading, torrents} = this.state
+    const {loading, seededTorrents, cachedTorrents} = this.state
 
     if (loading) {
       return null
@@ -57,12 +68,44 @@ export default class Main extends React.Component {
 
     return (
       <React.Fragment>
-        <h1>WebTorrent Manager</h1>
-        <Torrents
-          torrents={torrents}
-          toggleSeed={this.toggleSeed.bind(this)}
-          destroyTorrent={this.destroyTorrent.bind(this)}
-        />
+        <h1>
+          <img src="/logo.svg" id="logo" />
+          WebTorrent Protocol
+        </h1>
+        {seededTorrents.length === 0 && cachedTorrents.length === 0 && (
+          <NonIdealState
+            title="No torrents"
+            description="Visit some WTP URLs"
+          />
+        )}
+        {(seededTorrents.length > 0 || cachedTorrents.length > 0) && (
+          <React.Fragment>
+            <h3>Seeded Sites</h3>
+            {seededTorrents.length === 0 && cachedTorrents.length > 0 && (
+              <NonIdealState
+                title="No sites being seeded"
+                description='Select "Permanently seed site" to start seeding a site'
+              />
+            )}
+            <Torrents
+              torrents={seededTorrents}
+              toggleSeed={this.toggleSeed.bind(this)}
+              destroyTorrent={this.destroyTorrent.bind(this)}
+            />
+            <h3>Cached Sites</h3>
+            {seededTorrents.length > 0 && cachedTorrents.length === 0 && (
+              <NonIdealState
+                title="No sites currently cached"
+                description="Visit some more WTP URLs"
+              />
+            )}
+            <Torrents
+              torrents={cachedTorrents}
+              toggleSeed={this.toggleSeed.bind(this)}
+              destroyTorrent={this.destroyTorrent.bind(this)}
+            />
+          </React.Fragment>
+        )}
       </React.Fragment>
     )
   }

@@ -3,6 +3,10 @@ body {
   margin: 50px auto;
 }
 
+#logo {
+  margin-right: 15px;
+}
+
 .torrent-section {
   margin: 15px 0;
 }
@@ -43,4 +47,19 @@ body {
 
 .torrent-menu .bp3-button {
   margin-left: 10px;
+}
+
+.non-ideal-state {
+  width: 100%;
+  text-align: center;
+  padding: 50px;
+}
+
+.non-ideal-state h4 {
+  margin-bottom: 5px;
+}
+
+.non-ideal-state h5 {
+  margin-top: 5px;
+  color: #5c7080;
 }

@@ -34,6 +34,7 @@ export default class Main extends React.Component {
 
   openManager() {
     browser.tabs.create({'url': browser.extension.getURL('/views/manager.html')})
+    window.close()
   }
 
   async toggleSeed() {
@@ -60,12 +61,17 @@ export default class Main extends React.Component {
         <Torrent torrent={torrent} browserAction toggleSeed={this.toggleSeed.bind(this)}/>
         {!torrent && (
           <React.Fragment>
-            <div className="torrent-section"><strong>WebTorrent Protocol</strong></div>
+            <div className="torrent-section">
+              <h3>WebTorrent Protocol</h3>
+            </div>
+            <div className="torrent-section meta">
+              <p>Not connected to a WTP site</p>
+            </div>
           </React.Fragment>
         )}
         <ButtonGroup>
           <Button intent="primary" onClick={this.openManager} id="manage-webtorrents">
-            Manage WebTorrents
+            Manage WTP Sites
           </Button>
         </ButtonGroup>
       </React.Fragment>

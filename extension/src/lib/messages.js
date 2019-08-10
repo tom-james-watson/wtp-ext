@@ -23,6 +23,7 @@ async function onGetCurrentTorrent({url}) {
     const torrent = await getTorrent(hash)
     return formatTorrent(torrent)
   } catch (err) {
+    console.error(err)
     return null
   }
 }

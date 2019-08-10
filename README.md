@@ -68,8 +68,8 @@ www  | TXT  | wtpkey=951ead31d09e4049fc1f21f137e233dd0589fcbd
 
 Here are the major pieces of functionality I would like to add:
 
-* Add better control over how long visited websites are seeded. Currently they are all seeded forever unless manually deleted from the torrent manager.
 * Add the ability to create and seed websites directly from the extension.
+* Use the UDP/TCP libdweb APIs to enable interop with traditional torrent clients.
 
 ## Running the WebTorrent Protocol Handler extension
 

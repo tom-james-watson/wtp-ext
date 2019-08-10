@@ -45,7 +45,9 @@ Visitors to the website also act as seeders, ensuring the website can scale as t
 
 ![Browser action popup showing torrent stats](./images/browser-action.png)
 
-Currently, torrents are automatically seeded forever. Currently-seeded torrents and their stats can be seen from the torrent management page, where torrents can also be manually removed:
+Sites are automatically cached for 30 minutes, seeding to any other users that load the torrent during that time. Sites can also be permanently seeded, in which case they will be seeded constantly whenever the browser is open.
+
+What torrents are currently cached or being seeded, along with associated stats, can be seen from the torrent management page, where torrents can also be manually removed:
 
 ![Torrent management page](./images/torrent-manager.png)
 
